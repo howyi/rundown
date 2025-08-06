@@ -1,7 +1,14 @@
-import { Button } from "@/components/ui/button";
+import { headers } from "next/headers";
 import Image from "next/image";
+import { Button } from "@/components/ui/button";
+import { auth } from "@/lib/auth";
+import { AddRssFeed } from "@/server/controllers/actions";
 
-export default function Home() {
+export default async function Home() {
+	const session = await auth.api.getSession({
+		headers: await headers(),
+	});
+	console.log("session", session?.user.id);
 	return (
 		<div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
 			<main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
@@ -15,11 +22,13 @@ export default function Home() {
 				/>
 				<ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
 					<li className="mb-2 tracking-[-.01em]">
-						Get started by editing{" "}
+						{session?.user.id}
 						<code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
 							app/page.tsx
 						</code>
-						.<Button>aa</Button>
+						<form action={AddRssFeed} className="inline">
+							<Button type="submit">aa</Button>
+						</form>
 					</li>
 					<li className="tracking-[-.01em]">
 						Save and see your changes instantly.

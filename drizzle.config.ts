@@ -3,7 +3,7 @@ import "@/envConfig";
 import { defineConfig } from "drizzle-kit";
 
 export default defineConfig({
-	schema: "./database/schema.ts",
+	schema: "./database/schema/**/*.ts",
 	dialect: "postgresql",
 	dbCredentials: {
 		// biome-ignore lint/style/noNonNullAssertion: required
