@@ -71,6 +71,7 @@ export function AuthForm({ className, ...props }: AuthFormProps) {
 
 	return (
 		<div className={cn("grid gap-6", className)} {...props}>
+			<div className="text-center text-3xl font-light pb-4">rundown</div>
 			<div className="flex justify-center">
 				<button
 					type="button"

@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { SignOutButton } from "@/components/partials/sign-out-button";
 import { ThemeProvider } from "@/components/partials/theme-provider";
 
 const geistSans = Geist({
@@ -34,7 +33,6 @@ export default function RootLayout({
 					defaultTheme="dark"
 					disableTransitionOnChange
 				>
-					<SignOutButton />
 					{children}
 				</ThemeProvider>
 			</body>

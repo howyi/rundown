@@ -8,7 +8,7 @@ export async function middleware(request: NextRequest) {
 	});
 
 	if (!session) {
-		return NextResponse.redirect(new URL("/sign-in", request.url));
+		return NextResponse.redirect(new URL("/", request.url));
 	}
 
 	return NextResponse.next();
@@ -16,6 +16,5 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
 	runtime: "nodejs",
-	// /sign-in 以外のページはこのミドルウェアを適用
-	matcher: ["/", "/test"],
+	matcher: ["/feeds/:path*", "/settings/:path*"],
 };
