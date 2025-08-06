@@ -39,3 +39,10 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+certificates
+
+# env files (can opt-in for committing if needed)
+.env*
+!.env.example
+!.env.test

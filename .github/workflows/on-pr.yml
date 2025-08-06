@@ -1,0 +1,61 @@
+name: CI
+
+on:
+  pull_request:
+    types:
+      - opened
+      - reopened
+      - synchronize
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup mise
+        uses: jdx/mise-action@v2
+        with:
+          version: 2025.5.13
+
+      - name: Setup env
+        run: cp .env.test .env
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Run Biome check
+        run: pnpm exec biome ci
+
+      - name: Run typecheck
+        run: pnpm run typecheck
+
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup mise
+        uses: jdx/mise-action@v2
+        with:
+          version: 2025.5.13
+
+      - name: Setup env
+        run: cp .env.test .env
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Run build
+        run: pnpm run build
