@@ -42,8 +42,15 @@
 
 ## 認証あり
 - `/feeds` - フィードの登録・取得・削除
+- `/timeline` - タイムライン表示
 - `/feeds/:id` - 特定フィードの詳細取得・更新・削除
 - `/settings` - ユーザー設定
+
+## ドメイン用語
+- summarize - 要約する
+- feed - RSSフィードの1URLを示す
+- article - RSSフィードの1記事を示す
+- user - ユーザー
 
 ---
 

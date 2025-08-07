@@ -3,24 +3,24 @@ import "@/envConfig";
 // 環境変数読み込み後に他のモジュールをインポート
 import { Worker } from "bullmq";
 import {
-	getSampleQueue,
+	crawlJobHandler,
+	getCrawlQueue,
 	RedisConnection,
-	sampleJobHandler,
-} from "@/server/queues/sample-queue";
+} from "@/server/queues/crawl-queue";
 
-const sampleWorker = new Worker(getSampleQueue().name, sampleJobHandler, {
+const crawlWorker = new Worker(getCrawlQueue().name, crawlJobHandler, {
 	connection: RedisConnection,
 	concurrency: 3,
 });
 
 // エラーハンドリング
-sampleWorker.on("error", (error) => {
-	console.error("❌ Sample Worker error:", error);
+crawlWorker.on("error", (error) => {
+	console.error("❌ Crawl Worker error:", error);
 });
 
 // 正常終了時の処理
 process.on("SIGTERM", async () => {
 	console.log("🛑 Worker shutting down...");
-	await sampleWorker.close();
+	await crawlWorker.close();
 	process.exit(0);
 });

@@ -1,0 +1,20 @@
+import { ArticleList } from "@/components/shared/article-list";
+import { getUserId } from "@/lib/auth";
+import { ListFeedArticle } from "@/server/queries/list-feed-article";
+
+export default async function Home({
+	params,
+}: {
+	params: Promise<{ id: string }>;
+}) {
+	const feedId = await params.then((p) => p.id);
+	const userId = await getUserId();
+
+	const feed = await ListFeedArticle({ userId, feedId });
+	return (
+		<>
+			<h2 className="text-2xl font-bold mb-4">{feed.title}</h2>
+			<ArticleList articles={feed.articles} />
+		</>
+	);
+}

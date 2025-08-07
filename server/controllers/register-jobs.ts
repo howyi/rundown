@@ -1,17 +1,14 @@
 import "@/envConfig";
 
-import { getSampleQueue } from "@/server/queues/sample-queue";
+import { getCrawlQueue } from "@/server/queues/crawl-queue";
 
 async function registerJobs() {
-	// 現時点の timestamp を埋め込んで固定データとして登録
 	const timestamp = new Date().toISOString();
 
-	// 新しいスケジューラを登録（重複があれば上書き）
-	await getSampleQueue().upsertJobScheduler(
-		"sample-job-every-5min", // schedulerId
+	await getCrawlQueue().upsertJobScheduler(
+		"crawl-job-every-15min", // schedulerId
 		{
-			pattern: "*/5 * * * *", // cronパターン
-			tz: "Asia/Tokyo", // タイムゾーン
+			pattern: "*/15 * * * *",
 		},
 		{
 			name: "sample-job",
@@ -19,7 +16,7 @@ async function registerJobs() {
 				type: "sample-task",
 				trigger: "cron",
 				timestamp,
-				note: "毎5分のテスト実行",
+				note: "毎15分のクロール実行",
 			},
 			opts: {
 				removeOnComplete: true,
@@ -27,9 +24,9 @@ async function registerJobs() {
 		},
 	);
 
-	console.log("定期ジョブを登録");
+	console.log("crawl-job-every-15min registered with pattern '*/15 * * * *'");
 }
 
 registerJobs().catch((err) => {
-	console.error("ジョブ登録中にエラー:", err);
+	console.error("Error registering jobs:", err);
 });

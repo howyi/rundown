@@ -4,14 +4,14 @@ import { createBullBoard } from "@bull-board/api";
 import { BullMQAdapter } from "@bull-board/api/bullMQAdapter";
 import { ExpressAdapter } from "@bull-board/express";
 import express from "express";
-import { getSampleQueue } from "@/server/queues/sample-queue";
+import { getCrawlQueue } from "@/server/queues/crawl-queue";
 
 const app = express();
 const serverAdapter = new ExpressAdapter();
 serverAdapter.setBasePath("/admin/queues");
 
 createBullBoard({
-	queues: [new BullMQAdapter(getSampleQueue())],
+	queues: [new BullMQAdapter(getCrawlQueue())],
 	serverAdapter,
 });
 

@@ -5,19 +5,25 @@ import {
 	SidebarFooter,
 	SidebarHeader,
 } from "@/components/ui/sidebar";
+import { FeedList } from "../shared/feed-list";
 import { Button } from "../ui/button";
 import { SignOutButton } from "./sign-out-button";
 
-export function AppSidebar() {
+export async function AppSidebar() {
 	return (
 		<Sidebar>
 			<SidebarHeader>
 				<Button asChild>
-					<Link href="/feeds">feeds</Link>
+					<Link href="/timeline">Timeline</Link>
 				</Button>
 			</SidebarHeader>
-			<SidebarContent></SidebarContent>
+			<SidebarContent>
+				<FeedList />
+			</SidebarContent>
 			<SidebarFooter>
+				<Button asChild>
+					<Link href="/feeds">Feed List</Link>
+				</Button>
 				<Button asChild>
 					<Link href="/settings">Settings</Link>
 				</Button>
