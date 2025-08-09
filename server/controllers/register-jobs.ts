@@ -6,7 +6,7 @@ async function registerJobs() {
 	const timestamp = new Date().toISOString();
 
 	await getCrawlQueue().upsertJobScheduler(
-		"crawl-job-every-15min", // schedulerId
+		"crawl-job", // schedulerId
 		{
 			pattern: "*/15 * * * *",
 		},
