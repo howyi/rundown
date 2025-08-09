@@ -60,6 +60,11 @@ export async function AddFeed({
 		const existingArticleRecord = existingArticleRecords.find(
 			(article) => article.guid === (item.guid || item.link),
 		);
+		const publishedAt = item.pubDate
+			? new Date(item.pubDate)
+			: item["dc:date"]
+				? new Date(item["dc:date"])
+				: new Date();
 		const articleRecord: typeof article.$inferInsert = {
 			id: existingArticleRecord?.id || `a_${nanoid()}`,
 			guid: item.guid || item.link,
@@ -68,7 +73,7 @@ export async function AddFeed({
 			url: item.link || "",
 			content:
 				item["content:encoded"] || item.content || item.contentSnippet || "",
-			publishedAt: item.pubDate ? new Date(item.pubDate) : new Date(),
+			publishedAt,
 		};
 		// TODO fix N+1 issue
 		await db
