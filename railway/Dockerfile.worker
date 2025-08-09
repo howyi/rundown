@@ -45,5 +45,5 @@ COPY --chown=node:node --from=build /app/node_modules /app/node_modules
 COPY --chown=node:node --from=build /app/build /app/build
 
 USER node
-ENTRYPOINT ["node_modules/.bin/node"]
+ENTRYPOINT ["node"]
 CMD ["--max-old-space-size=192", "build/services/worker.js"]

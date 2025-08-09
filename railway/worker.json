@@ -2,7 +2,7 @@
 	"$schema": "https://railway.com/railway.schema.json",
 	"build": {
 		"builder": "DOCKERFILE",
-		"dockerfilePath": "Dockerfile.worker"
+		"dockerfilePath": "railway/Dockerfile.worker"
 	},
 	"deploy": {
 		"restartPolicyType": "NEVER"
