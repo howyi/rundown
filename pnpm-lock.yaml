@@ -120,6 +120,9 @@ importers:
       drizzle-kit:
         specifier: ^0.31.4
         version: 0.31.4
+      esbuild:
+        specifier: ^0.25.8
+        version: 0.25.8
       tailwindcss:
         specifier: ^4
         version: 4.1.11
