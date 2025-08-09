@@ -2,7 +2,7 @@ import Markdown from "react-markdown";
 
 export function SummarizedContent({ content }: { content: string }) {
 	return (
-		<div className="prose prose-sm dark:prose-invert max-w-none prose-a:text-blue-400">
+		<div className="wrap-break-word prose prose-sm dark:prose-invert max-w-none prose-a:text-blue-400">
 			<Markdown
 				components={{
 					a: AnchorTag,
