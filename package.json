@@ -8,6 +8,7 @@
 		"start": "next start",
 		"lint": "biome check",
 		"lintf": "biome check --write --unsafe",
+		"bull-board": "tsx server/controllers/bull-board.ts",
 		"db:push": "drizzle-kit push",
 		"prod:worker": "tsx server/controllers/worker.ts",
 		"prod:register-jobs": "tsx server/controllers/register-jobs.ts",
