@@ -11,7 +11,8 @@
 		"db:push": "drizzle-kit push",
 		"prod:worker": "tsx server/controllers/worker.ts",
 		"prod:register-jobs": "tsx server/controllers/register-jobs.ts",
-		"build:worker": "esbuild server/controllers/worker.ts --bundle --platform=node --target=node22 --outfile=build/services/worker.js"
+		"build:worker": "esbuild server/controllers/worker.ts --bundle --platform=node --target=node22 --outfile=build/services/worker.js",
+		"bootstrap": "drizzle-kit push --force"
 	},
 	"dependencies": {
 		"@bull-board/api": "^6.12.0",
