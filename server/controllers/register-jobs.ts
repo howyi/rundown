@@ -5,7 +5,8 @@ import { getCrawlQueue } from "@/server/queues/crawl-queue";
 async function registerJobs() {
 	const timestamp = new Date().toISOString();
 
-	await getCrawlQueue().upsertJobScheduler(
+	const crawlQueue = getCrawlQueue();
+	await crawlQueue.upsertJobScheduler(
 		"crawl-job", // schedulerId
 		{
 			pattern: "*/15 * * * *",
@@ -24,7 +25,9 @@ async function registerJobs() {
 		},
 	);
 
-	console.log("crawl-job-every-15min registered with pattern '*/15 * * * *'");
+	console.log("crawl-job registered with pattern '*/15 * * * *'");
+
+	await crawlQueue.close();
 }
 
 registerJobs().catch((err) => {
