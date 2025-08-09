@@ -10,7 +10,7 @@ export default async function Home() {
 	});
 
 	if (session) {
-		redirect("/feeds");
+		redirect("/timeline");
 	}
 
 	return (
