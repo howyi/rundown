@@ -10,6 +10,8 @@ import {
 import { Button } from "../ui/button";
 import { Skeleton } from "../ui/skeleton";
 import { SummarizeButton } from "./summarize-button";
+import Markdown from "react-markdown";
+import { SummarizedContent } from "./summarized-content";
 
 export function ArticleCard({ article }: { article: ArticleWithFeed }) {
 	const [summarized, setSummarized] = useState(article.summary || "");
@@ -46,10 +48,10 @@ export function ArticleCard({ article }: { article: ArticleWithFeed }) {
 			>
 				{article.title}
 			</Link>
-			<div className="relative text-sm mt-1 p-2 whitespace-pre-wrap border">
+			<div className="relative text-sm mt-1 p-2 border">
 				{summarized ? (
 					<>
-						<p className="">{summarized}</p>
+						<SummarizedContent content={summarized} />
 						<Button
 							variant={"ghost"}
 							onClick={handleRemoveSummary}
@@ -60,13 +62,16 @@ export function ArticleCard({ article }: { article: ArticleWithFeed }) {
 						</Button>
 					</>
 				) : (
-					<SummarizeButton
-						summarizing={summarizing}
-						onClick={handleSummarize}
-					/>
+					<div className="flex flex-col gap-2">
+						<SummarizeButton
+							className="w-full max-w-xs mx-auto"
+							summarizing={summarizing}
+							onClick={handleSummarize}
+						/>
+					</div>
 				)}
 				{summarizing && (
-					<div className="space-y-2">
+					<div className="space-y-2 pt-2">
 						<Skeleton className="h-4" />
 						<Skeleton className="h-4 w-[50%]" />
 						<Skeleton className="h-4 w-[70%]" />

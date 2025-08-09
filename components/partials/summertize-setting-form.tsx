@@ -21,6 +21,7 @@ import {
 	SelectValue,
 } from "../ui/select";
 import { Skeleton } from "../ui/skeleton";
+import { SummarizedContent } from "../shared/summarized-content";
 
 const Languages = ["English", "Japanese", "Chinese", "Korean", "Spanish"];
 
@@ -171,7 +172,7 @@ export function SummarizeSettingForm({
 							<Skeleton className="h-4 w-[40%]" />
 						</div>
 					) : (
-						<p className="whitespace-pre-wrap text-xs">{summarized}</p>
+						<SummarizedContent content={summarized} />
 					)}
 					<ScrollBar orientation="vertical" />
 				</ScrollArea>
