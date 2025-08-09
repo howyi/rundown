@@ -74,11 +74,6 @@ export function SummarizeSettingForm({
 	const handleSummarize = async () => {
 		// Logic to handle summarization, e.g., calling an API or processing the text
 		setSummarizing(true);
-		console.log("Summarizing with settings:", {
-			language,
-			length,
-			customInstructions,
-		});
 		const previewResponse = await PreviewSummarizeAction({
 			language,
 			length,

@@ -44,7 +44,6 @@ export async function AddFeed({
 		});
 
 	if (parsed.items.length === 0) {
-		console.log("No items found in the feed");
 		return;
 	}
 

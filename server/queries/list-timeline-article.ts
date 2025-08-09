@@ -27,7 +27,6 @@ export async function ListTimelineArticle({
 			feed: true,
 		},
 	});
-	console.log("articleRecords", articleRecords);
 	return articleRecords.map((article) => ({
 		id: article.id,
 		title: article.title || "",
