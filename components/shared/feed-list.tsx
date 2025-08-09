@@ -14,7 +14,7 @@ export async function FeedList() {
 	return (
 		<ul>
 			{feeds.map((feed) => (
-				<li key={feed.id} className="p-2 border-b">
+				<li key={feed.id} className="p-2 border-b truncate">
 					<Link href={`/feeds/${feed.id}`}>{feed.title}</Link>
 				</li>
 			))}

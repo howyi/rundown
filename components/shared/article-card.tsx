@@ -8,10 +8,9 @@ import {
 	SummarizeAction,
 } from "@/server/controllers/actions";
 import { Button } from "../ui/button";
-import { Skeleton } from "../ui/skeleton";
 import { SummarizeButton } from "./summarize-button";
-import Markdown from "react-markdown";
 import { SummarizedContent } from "./summarized-content";
+import { SummarySkeleton } from "./summary-skeleton";
 
 export function ArticleCard({ article }: { article: ArticleWithFeed }) {
 	const [summarized, setSummarized] = useState(article.summary || "");
@@ -70,14 +69,7 @@ export function ArticleCard({ article }: { article: ArticleWithFeed }) {
 						/>
 					</div>
 				)}
-				{summarizing && (
-					<div className="space-y-2 pt-2">
-						<Skeleton className="h-4" />
-						<Skeleton className="h-4 w-[50%]" />
-						<Skeleton className="h-4 w-[70%]" />
-						<Skeleton className="h-4 w-[40%]" />
-					</div>
-				)}
+				{summarizing && <SummarySkeleton className="mt-2" />}
 			</div>
 		</li>
 	);

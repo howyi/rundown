@@ -8,6 +8,8 @@ import {
 	SaveSummarySettingAction,
 } from "@/server/controllers/actions";
 import { SummarizeButton } from "../shared/summarize-button";
+import { SummarizedContent } from "../shared/summarized-content";
+import { SummarySkeleton } from "../shared/summary-skeleton";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
@@ -20,8 +22,6 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "../ui/select";
-import { Skeleton } from "../ui/skeleton";
-import { SummarizedContent } from "../shared/summarized-content";
 
 const Languages = ["English", "Japanese", "Chinese", "Korean", "Spanish"];
 
@@ -165,12 +165,7 @@ export function SummarizeSettingForm({
 				/>
 				<ScrollArea className="overflow-y-hidden border p-2">
 					{summarizing ? (
-						<div className="space-y-2 py-2">
-							<Skeleton className="h-4" />
-							<Skeleton className="h-4 w-[50%]" />
-							<Skeleton className="h-4 w-[70%]" />
-							<Skeleton className="h-4 w-[40%]" />
-						</div>
+						<SummarySkeleton />
 					) : (
 						<SummarizedContent content={summarized} />
 					)}

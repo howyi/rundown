@@ -14,11 +14,12 @@ export function SummarizedContent({ content }: { content: string }) {
 	);
 }
 
+// biome-ignore lint/suspicious/noExplicitAny: anchor tag needs any type for props
 const AnchorTag = ({ node, children, ...props }: any) => {
 	try {
 		new URL(props.href ?? "");
 		props.target = "_blank";
 		props.rel = "noopener noreferrer";
-	} catch (e) {}
+	} catch (_e) {}
 	return <a {...props}>{children}</a>;
 };

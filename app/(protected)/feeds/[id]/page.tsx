@@ -13,7 +13,7 @@ export default async function Home({
 	const feed = await ListFeedArticle({ userId, feedId });
 	return (
 		<>
-			<h2 className="text-2xl font-bold mb-4">{feed.title}</h2>
+			<h2 className="text-2xl font-bold mb-4 truncate">{feed.title}</h2>
 			<ArticleList articles={feed.articles} />
 		</>
 	);
