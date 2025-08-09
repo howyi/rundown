@@ -1,6 +1,7 @@
-import { Queue } from "bullmq";
+import { type ConnectionOptions, Queue } from "bullmq";
 
-export const RedisConnection = {
+export const RedisConnection: ConnectionOptions = {
+	family: process.env.REDIS_HOST?.includes("localhost") ? undefined : 0,
 	host: process.env.REDIS_HOST ?? "localhost",
 	port: process.env.REDIS_PORT ? Number(process.env.REDIS_PORT) : 6379,
 	password: process.env.REDIS_PASSWORD || undefined,
