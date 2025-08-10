@@ -2,8 +2,9 @@
 
 import { setTimeout } from "node:timers/promises";
 import { and, eq } from "drizzle-orm";
+import { nanoid } from "nanoid";
 import { revalidatePath } from "next/cache";
-import * as z from "zod";
+import { z } from "zod";
 import { db } from "@/database";
 import { userArticle, userSetting } from "@/database/schema/app";
 import { getUserId } from "@/lib/auth";
@@ -22,9 +23,8 @@ export async function AddFeedAction(
 	_prevState: any,
 	formData: FormData,
 ): Promise<ActionState> {
-	// zodでバリデーション
 	const schema = z.object({
-		url: z.url(),
+		url: z.string().url(),
 	});
 	const result = schema.safeParse(Object.fromEntries(formData));
 	if (!result.success) {
@@ -149,6 +149,7 @@ export async function AddDiscordWebhookAction(
 	// zodでバリデーション
 	const schema = z.object({
 		url: z
+			.string()
 			.url()
 			.startsWith("https://discord.com/api/webhooks/")
 			.or(z.literal("")),
@@ -209,5 +210,30 @@ export async function TestNotificationAction(): Promise<ActionState> {
 		articleSummary: article.summary,
 		discordWebhookUrl: setting?.notificationDiscordWebhookUrl,
 	});
+	return {};
+}
+
+export async function RegenerateApiKeyAction(): Promise<ActionState> {
+	const userId = await getUserId();
+	const newApiKey = `rd_${nanoid(32)}`;
+	await db
+		.update(userSetting)
+		.set({
+			mcpApiKey: newApiKey,
+		})
+		.where(eq(userSetting.userId, userId));
+	revalidatePath("/settings/mcp");
+	return {};
+}
+
+export async function RevokeApiKeyAction(): Promise<ActionState> {
+	const userId = await getUserId();
+	await db
+		.update(userSetting)
+		.set({
+			mcpApiKey: "",
+		})
+		.where(eq(userSetting.userId, userId));
+	revalidatePath("/settings/mcp");
 	return {};
 }
