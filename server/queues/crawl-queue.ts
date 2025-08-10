@@ -3,6 +3,7 @@ import Parser from "rss-parser";
 import { db } from "@/database";
 import { article, type feed, type userFeed } from "@/database/schema/app";
 import { ItemToArticle } from "../lib/item-to-article";
+import { Notification } from "../mutations/notification";
 import { Summarize } from "../mutations/summarize";
 
 export const RedisConnection: ConnectionOptions = {
@@ -94,14 +95,22 @@ async function crawlArticle({
 			const setting = await db.query.userSetting.findFirst({
 				where: (setting, { eq }) => eq(setting.userId, userFeedRecord.userId),
 			});
-			await Summarize({
+			const summary = await Summarize({
 				userId: userFeedRecord.userId,
 				language: setting?.summaryLanguage,
 				length: setting?.summaryLength,
 				customInstructions: setting?.summaryInstructions,
 				articleRecord,
 			});
-			// Notification logic can be added here
+
+			await Notification({
+				feedTitle: feedRecord.title,
+				feedUrl: feedRecord.url || undefined,
+				articleTitle: articleRecord.title,
+				articleUrl: articleRecord.url,
+				articleSummary: summary,
+				discordWebhookUrl: setting?.notificationDiscordWebhookUrl,
+			});
 		}
 	}
 }

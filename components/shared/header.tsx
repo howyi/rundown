@@ -1,5 +1,6 @@
 "use client";
 
+import { Bell, Sparkles } from "lucide-react";
 import Link from "next/link";
 import {
 	NavigationMenu,
@@ -8,7 +9,6 @@ import {
 	NavigationMenuList,
 } from "../ui/navigation-menu";
 import { SidebarTrigger } from "../ui/sidebar";
-import { Bell, Sparkles } from "lucide-react";
 
 export function Header({
 	title,

@@ -5,12 +5,9 @@ import { useActionState, useEffect } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import {
-	AddFeedAction,
-	type AddFeedFormState,
-} from "@/server/controllers/actions";
+import { type ActionState, AddFeedAction } from "@/server/controllers/actions";
 
-const initialState: AddFeedFormState = {};
+const initialState: ActionState = {};
 
 export default function AddFeedForm() {
 	const [state, formAction, pending] = useActionState(

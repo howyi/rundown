@@ -3,8 +3,10 @@ import type { ArticleWithFeed } from "@/lib/types";
 
 export async function ListTimelineArticle({
 	userId,
+	limit = 100,
 }: {
 	userId: string;
+	limit?: number;
 }): Promise<ArticleWithFeed[]> {
 	const feedRecords = await db.query.userFeed.findMany({
 		where: (userFeed, { eq }) => eq(userFeed.userId, userId),
@@ -19,7 +21,7 @@ export async function ListTimelineArticle({
 	const articleRecords = await db.query.article.findMany({
 		where: (article, { inArray }) => inArray(article.feedId, feedIds),
 		orderBy: (article, { desc }) => desc(article.publishedAt),
-		limit: 100,
+		limit,
 		with: {
 			userArticles: {
 				where: (userArticle, { eq }) => eq(userArticle.userId, userId),
@@ -36,7 +38,7 @@ export async function ListTimelineArticle({
 		feed: {
 			id: article.feed.id,
 			title: article.feed.title || "",
-			url: article.feed.rssUrl || "",
+			url: article.feed.url || "",
 			description: article.feed.description || "",
 		},
 	}));

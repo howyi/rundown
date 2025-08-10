@@ -1,5 +1,6 @@
 "use server";
 
+import { setTimeout } from "node:timers/promises";
 import { and, eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import * as z from "zod";
@@ -8,17 +9,19 @@ import { userArticle, userSetting } from "@/database/schema/app";
 import { getUserId } from "@/lib/auth";
 import type { FeedId } from "@/lib/types";
 import { AddFeed } from "../mutations/add-feed";
+import { Notification } from "../mutations/notification";
 import { Summarize } from "../mutations/summarize";
+import { ListTimelineArticle } from "../queries/list-timeline-article";
 import { getCrawlQueue } from "../queues/crawl-queue";
 
-export type AddFeedFormState = {
+export type ActionState = {
 	error?: string;
 };
 export async function AddFeedAction(
 	// biome-ignore lint/suspicious/noExplicitAny: unused
 	_prevState: any,
 	formData: FormData,
-): Promise<AddFeedFormState> {
+): Promise<ActionState> {
 	// zodでバリデーション
 	const schema = z.object({
 		url: z.url(),
@@ -136,4 +139,75 @@ export async function ManualCrawlAction(): Promise<void> {
 			removeOnFail: true,
 		},
 	);
+}
+
+export async function AddDiscordWebhookAction(
+	// biome-ignore lint/suspicious/noExplicitAny: unused
+	_prevState: any,
+	formData: FormData,
+): Promise<ActionState> {
+	// zodでバリデーション
+	const schema = z.object({
+		url: z
+			.url()
+			.startsWith("https://discord.com/api/webhooks/")
+			.or(z.literal("")),
+	});
+	const result = schema.safeParse(Object.fromEntries(formData));
+	if (!result.success) {
+		return { error: "Invalid Discord webhook URL" };
+	}
+	const userId = await getUserId();
+	await db
+		.update(userSetting)
+		.set({
+			notificationDiscordWebhookUrl: result.data.url,
+		})
+		.where(eq(userSetting.userId, userId));
+	revalidatePath("/settings/notification");
+	return {};
+}
+
+export async function TestNotificationAction(): Promise<ActionState> {
+	const userId = await getUserId();
+	await setTimeout(1000); // Simulate a delay
+	const setting = await db.query.userSetting.findFirst({
+		where: (setting, { eq }) => eq(setting.userId, userId),
+	});
+	if (!setting) {
+		return { error: "User setting not found" };
+	}
+	const articles = await ListTimelineArticle({
+		userId,
+		limit: 1,
+	});
+	if (!articles.length || !articles[0]) {
+		return { error: "No articles found for notification" };
+	}
+	const article = articles[0];
+	let summary = article.summary;
+	if (!summary) {
+		const articleRecord = await db.query.article.findFirst({
+			where: (article, { eq }) => eq(article.id, article.id),
+		});
+		if (!articleRecord) {
+			return { error: "Article not found for summarization" };
+		}
+		summary = await Summarize({
+			userId,
+			language: setting?.summaryLanguage,
+			length: setting?.summaryLength,
+			customInstructions: setting?.summaryInstructions,
+			articleRecord,
+		});
+	}
+	await Notification({
+		feedTitle: article.feed?.title || "",
+		feedUrl: article.feed?.url || "",
+		articleTitle: article.title,
+		articleUrl: article.url,
+		articleSummary: article.summary,
+		discordWebhookUrl: setting?.notificationDiscordWebhookUrl,
+	});
+	return {};
 }
