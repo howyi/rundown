@@ -12,12 +12,12 @@ async function registerJobs() {
 			pattern: "*/15 * * * *",
 		},
 		{
-			name: "sample-job",
+			name: "crawl-job",
 			data: {
-				type: "sample-task",
+				type: "crawl-task",
 				trigger: "cron",
 				timestamp,
-				note: "毎15分のクロール実行",
+				note: "RSS feed crawl every 15 minutes",
 			},
 			opts: {
 				removeOnComplete: true,

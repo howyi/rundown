@@ -1,29 +1,23 @@
 import OpenAI from "openai";
 import { db } from "@/database";
-import { userArticle } from "@/database/schema/app";
+import { type article, userArticle } from "@/database/schema/app";
 import { SummaryLengthOptions } from "@/lib/const";
 
 const openai = new OpenAI();
 
 export async function Summarize({
 	userId,
-	articleId,
-	language,
-	length,
-	customInstructions,
+	language = "english",
+	length = "medium",
+	customInstructions = "",
+	articleRecord,
 }: {
 	userId: string;
-	articleId: string;
-	language: string;
-	length: string;
-	customInstructions: string;
+	language?: string;
+	length?: string;
+	customInstructions?: string;
+	articleRecord: typeof article.$inferInsert;
 }): Promise<string> {
-	const articleRecord = await db.query.article.findFirst({
-		where: (article, { eq }) => eq(article.id, articleId),
-	});
-	if (!articleRecord) {
-		throw new Error("Article not found");
-	}
 	const response = await openai.responses.create({
 		model: "gpt-5-nano",
 		input:

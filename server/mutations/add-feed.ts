@@ -2,6 +2,7 @@ import { nanoid } from "nanoid";
 import Parser from "rss-parser";
 import { db } from "@/database";
 import { article, feed, userFeed } from "@/database/schema/app";
+import { ItemToArticle } from "../lib/item-to-article";
 
 const parser = new Parser();
 
@@ -60,21 +61,11 @@ export async function AddFeed({
 		const existingArticleRecord = existingArticleRecords.find(
 			(article) => article.guid === (item.guid || item.link),
 		);
-		const publishedAt = item.pubDate
-			? new Date(item.pubDate)
-			: item["dc:date"]
-				? new Date(item["dc:date"])
-				: new Date();
-		const articleRecord: typeof article.$inferInsert = {
-			id: existingArticleRecord?.id || `a_${nanoid()}`,
-			guid: item.guid || item.link,
+		const articleRecord = ItemToArticle({
+			articleId: existingArticleRecord?.id,
 			feedId,
-			title: item.title || "",
-			url: item.link || "",
-			content:
-				item["content:encoded"] || item.content || item.contentSnippet || "",
-			publishedAt,
-		};
+			item,
+		});
 		// TODO fix N+1 issue
 		await db
 			.insert(article)

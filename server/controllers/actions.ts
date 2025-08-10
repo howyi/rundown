@@ -9,6 +9,7 @@ import { getUserId } from "@/lib/auth";
 import type { FeedId } from "@/lib/types";
 import { AddFeed } from "../mutations/add-feed";
 import { Summarize } from "../mutations/summarize";
+import { getCrawlQueue } from "../queues/crawl-queue";
 
 export type AddFeedFormState = {
 	error?: string;
@@ -75,12 +76,18 @@ export async function SummarizeAction(params: {
 	const setting = await db.query.userSetting.findFirst({
 		where: (setting, { eq }) => eq(setting.userId, userId),
 	});
+	const articleRecord = await db.query.article.findFirst({
+		where: (article, { eq }) => eq(article.id, params.articleId),
+	});
+	if (!articleRecord) {
+		throw new Error("Article not found");
+	}
 	return Summarize({
 		userId,
-		articleId: params.articleId,
-		language: setting?.summaryLanguage || "english",
-		length: setting?.summaryLength || "medium",
-		customInstructions: setting?.summaryInstructions || "",
+		language: setting?.summaryLanguage,
+		length: setting?.summaryLength,
+		customInstructions: setting?.summaryInstructions,
+		articleRecord,
 	});
 }
 
@@ -105,11 +112,28 @@ export async function PreviewSummarizeAction(params: {
 	articleId: string;
 }): Promise<string> {
 	const userId = await getUserId();
+	const articleRecord = await db.query.article.findFirst({
+		where: (article, { eq }) => eq(article.id, params.articleId),
+	});
+	if (!articleRecord) {
+		throw new Error("Article not found");
+	}
 	return Summarize({
 		userId,
-		articleId: params.articleId,
 		language: params.language,
 		length: params.length,
 		customInstructions: params.customInstructions,
+		articleRecord,
 	});
+}
+
+export async function ManualCrawlAction(): Promise<void> {
+	await getCrawlQueue().add(
+		"crawl",
+		{},
+		{
+			removeOnComplete: true,
+			removeOnFail: true,
+		},
+	);
 }

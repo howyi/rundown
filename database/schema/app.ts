@@ -15,7 +15,7 @@ export const feed = pgTable(
 		title: varchar("title").notNull(),
 		description: text("description").notNull(),
 		url: varchar("url"),
-		rssUrl: varchar("rss_url"),
+		rssUrl: varchar("rss_url").notNull(),
 		timestamp: timestamp("timestamp").defaultNow(),
 	},
 	(t) => [unique().on(t.rssUrl)],

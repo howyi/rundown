@@ -1,4 +1,9 @@
 import { type ConnectionOptions, Queue } from "bullmq";
+import Parser from "rss-parser";
+import { db } from "@/database";
+import { article, type feed, type userFeed } from "@/database/schema/app";
+import { ItemToArticle } from "../lib/item-to-article";
+import { Summarize } from "../mutations/summarize";
 
 export const RedisConnection: ConnectionOptions = {
 	family: process.env.REDIS_HOST?.includes("localhost") ? undefined : 0,
@@ -28,6 +33,75 @@ type CrawlQueueData = {
 export async function crawlJobHandler(job: { data: CrawlQueueData }) {
 	const data = job.data;
 	console.log(`Crawl Job: ${data.note} | Job ID: ${data.note}`);
-	// ここにジョブの処理ロジックを追加
-	// 例: データベースに保存、外部APIへのリクエストなど
+
+	const userFeedRecords = await db.query.userFeed.findMany();
+
+	// array unique
+	const feedIds = Array.from(
+		new Set(userFeedRecords.map((record) => record.feedId)),
+	);
+	const feedRecords = await db.query.feed.findMany({
+		where: (feed, { inArray }) => inArray(feed.id, feedIds),
+	});
+
+	for (const feedRecord of feedRecords) {
+		await crawlArticle({
+			feedRecord,
+			userFeedRecords: userFeedRecords.filter(
+				(record) => record.feedId === feedRecord.id,
+			),
+		});
+	}
+}
+
+const parser = new Parser();
+
+async function crawlArticle({
+	feedRecord,
+	userFeedRecords,
+}: {
+	feedRecord: typeof feed.$inferSelect;
+	userFeedRecords: (typeof userFeed.$inferSelect)[];
+}): Promise<void> {
+	console.log(`Crawling feed: ${feedRecord.title} (${feedRecord.rssUrl})`);
+
+	const parsed = await parser.parseURL(feedRecord.rssUrl);
+
+	const articleGuids = parsed.items
+		.map((item) => item.guid || item.link || "")
+		.filter((guid) => guid !== "");
+
+	const existingArticleRecords = await db.query.article.findMany({
+		where: (article, { and, eq, inArray }) =>
+			and(
+				eq(article.feedId, feedRecord.id),
+				inArray(article.guid, articleGuids),
+			),
+	});
+
+	for (const item of parsed.items) {
+		const articleGuid = item.guid || item.link;
+		if (existingArticleRecords.find((record) => record.guid === articleGuid)) {
+			continue;
+		}
+		const articleRecord = ItemToArticle({
+			feedId: feedRecord.id,
+			item,
+		});
+		await db.insert(article).values(articleRecord);
+
+		for (const userFeedRecord of userFeedRecords) {
+			const setting = await db.query.userSetting.findFirst({
+				where: (setting, { eq }) => eq(setting.userId, userFeedRecord.userId),
+			});
+			await Summarize({
+				userId: userFeedRecord.userId,
+				language: setting?.summaryLanguage,
+				length: setting?.summaryLength,
+				customInstructions: setting?.summaryInstructions,
+				articleRecord,
+			});
+			// Notification logic can be added here
+		}
+	}
 }
