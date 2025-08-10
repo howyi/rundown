@@ -89,5 +89,9 @@ export const userSetting = pgTable("user_setting", {
 	summaryLength: varchar("summary_length").notNull().default("short"),
 	summaryLanguage: varchar("summary_language").notNull().default("english"),
 	summaryInstructions: varchar("summary_instructions").notNull().default(""),
+	notificationDiscordWebhookUrl: varchar("notification_discord_webhook_url")
+		.notNull()
+		.default(""),
+	mcpApiKey: varchar("mcp_api_key").notNull().default(""),
 	timestamp: timestamp("timestamp").defaultNow(),
 });

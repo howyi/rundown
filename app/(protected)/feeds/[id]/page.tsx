@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { ArticleList } from "@/components/shared/article-list";
+import { Header } from "@/components/shared/header";
 import { getUserId } from "@/lib/auth";
 import { ListFeedArticle } from "@/server/queries/list-feed-article";
 
@@ -27,7 +28,7 @@ export default async function Home({
 	const feed = await ListFeedArticle({ userId, feedId });
 	return (
 		<>
-			<h2 className="text-2xl font-bold mb-4 truncate">{feed.title}</h2>
+			<Header title={feed.title} />
 			<ArticleList articles={feed.articles} />
 		</>
 	);
