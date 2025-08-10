@@ -85,6 +85,7 @@ async function crawlArticle({
 		if (existingArticleRecords.find((record) => record.guid === articleGuid)) {
 			continue;
 		}
+		console.log(`Processing new article: ${item.title} (${articleGuid})`);
 		const articleRecord = ItemToArticle({
 			feedId: feedRecord.id,
 			item,
@@ -95,6 +96,7 @@ async function crawlArticle({
 			const setting = await db.query.userSetting.findFirst({
 				where: (setting, { eq }) => eq(setting.userId, userFeedRecord.userId),
 			});
+			console.log(`Found user setting for user ${userFeedRecord.userId}`);
 			const summary = await Summarize({
 				userId: userFeedRecord.userId,
 				language: setting?.summaryLanguage,
@@ -102,6 +104,9 @@ async function crawlArticle({
 				customInstructions: setting?.summaryInstructions,
 				articleRecord,
 			});
+			console.log(
+				`Summarized article: ${item.title} (${userFeedRecord.userId}) ${articleGuid}`,
+			);
 
 			await Notification({
 				feedTitle: feedRecord.title,
@@ -111,6 +116,10 @@ async function crawlArticle({
 				articleSummary: summary,
 				discordWebhookUrl: setting?.notificationDiscordWebhookUrl,
 			});
+
+			console.log(
+				`Notified user ${userFeedRecord.userId} about new article: ${item.title}`,
+			);
 		}
 	}
 }

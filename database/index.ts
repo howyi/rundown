@@ -7,5 +7,5 @@ const postgresUrl = process.env.POSTGRES_URL!;
 
 export const db = drizzlePg(postgresUrl, {
 	schema: { ...app, ...auth },
-	logger: true,
+	logger: false,
 });
