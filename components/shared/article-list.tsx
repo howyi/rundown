@@ -11,7 +11,7 @@ export async function ArticleList({
 	}
 
 	return (
-		<ul>
+		<ul className="flex flex-col gap-4">
 			{articles.map((article) => (
 				<ArticleCard article={article} key={article.id} />
 			))}

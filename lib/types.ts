@@ -3,6 +3,7 @@ export type Feed = {
 	id: FeedId;
 	title: string;
 	url: string;
+	rssUrl: string;
 	description: string;
 };
 

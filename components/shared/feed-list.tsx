@@ -1,6 +1,7 @@
-import Link from "next/link";
 import { getUserId } from "@/lib/auth";
 import { ListUserFeed } from "@/server/queries/list-user-feed";
+import { SubscribeButton } from "../partials/subscribe-button";
+import { FeedCard } from "./feed-card";
 
 export async function FeedList() {
 	const userId = await getUserId();
@@ -12,11 +13,11 @@ export async function FeedList() {
 	}
 
 	return (
-		<ul>
+		<ul className="flex flex-col gap-2">
 			{feeds.map((feed) => (
-				<li key={feed.id} className="p-2 border-b truncate">
-					<Link href={`/feeds/${feed.id}`}>{feed.title}</Link>
-				</li>
+				<FeedCard key={feed.id} feed={feed}>
+					<SubscribeButton feedId={feed.id} />
+				</FeedCard>
 			))}
 		</ul>
 	);

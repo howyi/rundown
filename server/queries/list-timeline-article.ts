@@ -39,6 +39,7 @@ export async function ListTimelineArticle({
 			id: article.feed.id,
 			title: article.feed.title || "",
 			url: article.feed.url || "",
+			rssUrl: article.feed.rssUrl || "",
 			description: article.feed.description || "",
 		},
 	}));

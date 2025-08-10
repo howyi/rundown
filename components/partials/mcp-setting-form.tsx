@@ -62,7 +62,7 @@ function RegenerateApiKeyButton() {
 
 	return (
 		<form action={formAction} className="flex flex-row gap-2">
-			<Button type="submit" disabled={pending}>
+			<Button type="submit" size="sm" disabled={pending}>
 				{pending ? <RefreshCw className="animate-spin" /> : <RefreshCw />}
 				Regenerate API Key
 			</Button>
@@ -81,7 +81,7 @@ function RevokeApiKeyButton() {
 
 	return (
 		<form action={formAction} className="flex flex-row gap-2">
-			<Button type="submit" disabled={pending}>
+			<Button type="submit" size="sm" disabled={pending}>
 				{pending ? <LoaderCircle className="animate-spin" /> : <Trash />}
 				Revoke API Key
 			</Button>

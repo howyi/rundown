@@ -1,6 +1,6 @@
 "use client";
 
-import { Plus } from "lucide-react";
+import { LoaderCircle, Plus } from "lucide-react";
 import { useActionState, useEffect } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -23,14 +23,10 @@ export default function AddFeedForm() {
 
 	return (
 		<div>
-			<form className="flex flex-row gap-2" action={formAction}>
-				<Input
-					placeholder="Enter feed URL"
-					name="url"
-					defaultValue={"https://thisweekinreact.com/newsletter/rss.xml"}
-				/>
+			<form className="flex flex-row gap-2 " action={formAction}>
+				<Input placeholder="Enter RSS URL" name="url" autoFocus />
 				<Button disabled={pending}>
-					<Plus />
+					{pending ? <LoaderCircle className="animate-spin" /> : <Plus />}
 					Add Feed
 				</Button>
 			</form>

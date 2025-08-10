@@ -1,7 +1,19 @@
 "use client";
 
+import { Ellipsis } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
+import {
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuItem,
+	DropdownMenuPortal,
+	DropdownMenuSeparator,
+	DropdownMenuSub,
+	DropdownMenuSubContent,
+	DropdownMenuSubTrigger,
+	DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import type { ArticleWithFeed } from "@/lib/types";
 import {
 	RemoveSummaryAction,
@@ -33,12 +45,85 @@ export function ArticleCard({ article }: { article: ArticleWithFeed }) {
 		setSummarized("");
 	};
 	return (
-		<li className="p-2 flex flex-col gap-2 border-b">
+		<li className="px-4 py-2 flex flex-col gap-2 bg-card border-2 border-l-4 shadow-md">
 			<div className="flex flex-row gap-2 text-xs">
-				<div className="flex-1 italic">{article.feed.title}</div>
+				<Link
+					href={`/feeds/${article.feed.id}`}
+					className="flex-1 italic text-muted-foreground hover:underline"
+				>
+					{article.feed.title}
+				</Link>
 				<span className=" text-gray-500">
 					{new Date(article.publishedAt).toLocaleDateString()}
 				</span>
+				<DropdownMenu>
+					<DropdownMenuTrigger asChild>
+						<Button
+							variant={"ghost"}
+							onClick={handleRemoveSummary}
+							size="sm"
+							className="text-muted-foreground text-xs h-4"
+						>
+							<Ellipsis />
+						</Button>
+					</DropdownMenuTrigger>
+					<DropdownMenuContent>
+						<DropdownMenuItem asChild>
+							<a href={article.url} target="_blank" rel="noopener noreferrer">
+								Open URL
+							</a>
+						</DropdownMenuItem>
+						<DropdownMenuSeparator />
+						<DropdownMenuItem asChild>
+							<Link
+								href={`/feeds/${article.feed.id}`}
+								target="_blank"
+								className="w-full"
+							>
+								Go to Feed page
+							</Link>
+						</DropdownMenuItem>
+						<DropdownMenuSeparator />
+						<DropdownMenuItem onClick={handleRemoveSummary}>
+							Reset Summary
+						</DropdownMenuItem>
+						<DropdownMenuItem asChild>
+							<Link
+								href={`/settings/summarize`}
+								target="_blank"
+								className="w-full"
+							>
+								Change summarize settings
+							</Link>
+						</DropdownMenuItem>
+						<DropdownMenuSeparator />
+
+						<DropdownMenuSub>
+							<DropdownMenuSubTrigger>Copy to Clipboard</DropdownMenuSubTrigger>
+							<DropdownMenuPortal>
+								<DropdownMenuSubContent>
+									<DropdownMenuItem
+										onClick={() => navigator.clipboard.writeText(article.url)}
+									>
+										URL
+									</DropdownMenuItem>
+									<DropdownMenuItem
+										onClick={() => navigator.clipboard.writeText(article.id)}
+									>
+										Article ID
+									</DropdownMenuItem>
+									<DropdownMenuItem
+										onClick={() =>
+											navigator.clipboard.writeText(article.feed.id)
+										}
+									>
+										Feed ID
+									</DropdownMenuItem>
+								</DropdownMenuSubContent>
+							</DropdownMenuPortal>
+						</DropdownMenuSub>
+					</DropdownMenuContent>
+				</DropdownMenu>
 			</div>
 			<Link
 				target="_blank"
@@ -49,17 +134,7 @@ export function ArticleCard({ article }: { article: ArticleWithFeed }) {
 			</Link>
 			<div className="relative text-sm mt-1 p-2 border">
 				{summarized ? (
-					<>
-						<SummarizedContent content={summarized} />
-						<Button
-							variant={"ghost"}
-							onClick={handleRemoveSummary}
-							size="sm"
-							className="absolute bottom-1 right-1 text-muted-foreground text-xs h-4"
-						>
-							Remove Summary
-						</Button>
-					</>
+					<SummarizedContent content={summarized} />
 				) : (
 					<div className="flex flex-col gap-2">
 						<SummarizeButton

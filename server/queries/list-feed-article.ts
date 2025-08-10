@@ -29,6 +29,7 @@ export async function ListFeedArticle({
 		id: feedRecord.id,
 		title: feedRecord.title || "",
 		url: feedRecord.url || "",
+		rssUrl: feedRecord.rssUrl || "",
 		description: feedRecord.description || "",
 		articles: articleRecords.map((article) => ({
 			id: article.id,
@@ -39,7 +40,8 @@ export async function ListFeedArticle({
 			feed: {
 				id: article.feed.id,
 				title: article.feed.title || "",
-				url: article.feed.rssUrl || "",
+				url: article.feed.url || "",
+				rssUrl: article.feed.rssUrl || "",
 				description: article.feed.description || "",
 			},
 		})),

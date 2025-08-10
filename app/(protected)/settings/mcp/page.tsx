@@ -10,7 +10,7 @@ export default async function Home() {
 	});
 	return (
 		<div>
-			<h1 className="text-2xl font-bold pb-2">Notification</h1>
+			<h1 className="text-2xl font-bold pb-2">MCP</h1>
 			<Separator />
 			<McpSettingForm mcpApiKey={setting?.mcpApiKey ?? ""} />
 		</div>

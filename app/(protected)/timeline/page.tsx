@@ -1,8 +1,6 @@
 import { ArticleList } from "@/components/shared/article-list";
 import { Header } from "@/components/shared/header";
-import { Button } from "@/components/ui/button";
 import { getUserId } from "@/lib/auth";
-import { ManualCrawlAction } from "@/server/controllers/actions";
 import { ListTimelineArticle } from "@/server/queries/list-timeline-article";
 
 export default async function Home() {
@@ -12,9 +10,9 @@ export default async function Home() {
 	return (
 		<>
 			<Header title="Timeline" />
-			<form action={ManualCrawlAction}>
+			{/* <form action={ManualCrawlAction}>
 				<Button type="submit">Crawl</Button>
-			</form>
+			</form> */}
 			<ArticleList articles={articles} />
 		</>
 	);

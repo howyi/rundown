@@ -6,14 +6,13 @@ import { nanoid } from "nanoid";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { db } from "@/database";
-import { userArticle, userSetting } from "@/database/schema/app";
+import { userArticle, userFeed, userSetting } from "@/database/schema/app";
 import { getUserId } from "@/lib/auth";
 import type { FeedId } from "@/lib/types";
 import { AddFeed } from "../mutations/add-feed";
 import { Notification } from "../mutations/notification";
 import { Summarize } from "../mutations/summarize";
 import { ListTimelineArticle } from "../queries/list-timeline-article";
-import { getCrawlQueue } from "../queues/crawl-queue";
 
 export type ActionState = {
 	error?: string;
@@ -42,6 +41,28 @@ export async function AddFeedAction(
 export async function DeleteFeed({ id }: { id: FeedId }): Promise<void> {
 	const userId = await getUserId();
 	console.log("DeleteFeed", userId, id);
+}
+
+export async function UnsubscribeAction(
+	// biome-ignore lint/suspicious/noExplicitAny: unused
+	_prevState: any,
+	formData: FormData,
+): Promise<ActionState> {
+	const schema = z.object({
+		feedId: z.string(),
+	});
+	const result = schema.safeParse(Object.fromEntries(formData));
+	if (!result.success) {
+		return { error: "Invalid feed ID" };
+	}
+	const userId = await getUserId();
+	await db
+		.delete(userFeed)
+		.where(
+			and(eq(userFeed.feedId, result.data.feedId), eq(userFeed.userId, userId)),
+		);
+	revalidatePath("/");
+	return {};
 }
 
 export async function SaveSummarySettingAction(params: {
@@ -130,16 +151,16 @@ export async function PreviewSummarizeAction(params: {
 	});
 }
 
-export async function ManualCrawlAction(): Promise<void> {
-	await getCrawlQueue().add(
-		"crawl",
-		{},
-		{
-			removeOnComplete: true,
-			removeOnFail: true,
-		},
-	);
-}
+// export async function ManualCrawlAction(): Promise<void> {
+// 	await getCrawlQueue().add(
+// 		"crawl",
+// 		{},
+// 		{
+// 			removeOnComplete: true,
+// 			removeOnFail: true,
+// 		},
+// 	);
+// }
 
 export async function AddDiscordWebhookAction(
 	// biome-ignore lint/suspicious/noExplicitAny: unused

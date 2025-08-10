@@ -1,6 +1,11 @@
+import { Rss } from "lucide-react";
 import type { Metadata } from "next";
+import Link from "next/link";
+import { SidebarOpenButton } from "@/components/partials/sidebar-fold-button";
 import { ArticleList } from "@/components/shared/article-list";
-import { Header } from "@/components/shared/header";
+import { FeedCard } from "@/components/shared/feed-card";
+import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
 import { getUserId } from "@/lib/auth";
 import { ListFeedArticle } from "@/server/queries/list-feed-article";
 
@@ -28,7 +33,15 @@ export default async function Home({
 	const feed = await ListFeedArticle({ userId, feedId });
 	return (
 		<>
-			<Header title={feed.title} />
+			<SidebarOpenButton className="mb-2" />
+			<FeedCard feed={feed}>
+				<Button asChild variant={"secondary"}>
+					<Link href={`/feeds`}>
+						<Rss />
+					</Link>
+				</Button>
+			</FeedCard>
+			<Separator className="my-4" />
 			<ArticleList articles={feed.articles} />
 		</>
 	);

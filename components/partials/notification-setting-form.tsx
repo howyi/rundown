@@ -17,7 +17,7 @@ export function NotificationSettingForm({
 	notificationDiscordWebhookUrl: string;
 }) {
 	return (
-		<div className="flex-1 flex flex-col gap-4 p-4 overflow-hidden break-words whitespace-pre-wrap">
+		<div className="flex-1 flex flex-col gap-2 p-4 overflow-hidden break-words whitespace-pre-wrap">
 			<DiscordWebhookForm
 				notificationDiscordWebhookUrl={notificationDiscordWebhookUrl}
 			/>
