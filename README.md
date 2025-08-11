@@ -3,6 +3,7 @@
 </div>
 
 # rundown — AI-Powered RSS Reader
+[![CI](https://github.com/howyi/rundown/actions/workflows/on-pr.yml/badge.svg)](https://github.com/howyi/rundown/actions/workflows/on-pr.yml)
 
 rundown crawls your subscribed RSS feeds every 15 minutes, detects new or updated articles, and generates AI-powered summaries.
 You can customize the summary language and length, and receive notifications via Discord Webhook.
