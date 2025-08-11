@@ -78,6 +78,7 @@ export function AuthForm() {
 				<Link href="/">📡 rundown</Link>
 			</div>
 			<form onSubmit={onSubmit} className="flex flex-col gap-2">
+				{/** biome-ignore lint/suspicious/noExplicitAny: value is string */}
 				<Tabs value={formType} onValueChange={(v) => setFormType(v as any)}>
 					<TabsList className="w-full gap-2">
 						<TabsTrigger value="sign-in">Sign In</TabsTrigger>
@@ -126,6 +127,18 @@ export function AuthForm() {
 						"Sign Up with Email"
 					)}
 				</Button>
+				<div className="text-xs text-muted-foreground text-center mt-4">
+					By creating an account, you agree to the
+					<br />
+					<Link href="/terms" className="underline" target="_blank">
+						Terms of Service
+					</Link>{" "}
+					and{" "}
+					<Link href="/privacy" className="underline" target="_blank">
+						Privacy Policy
+					</Link>
+					.
+				</div>
 			</form>
 		</div>
 	);
