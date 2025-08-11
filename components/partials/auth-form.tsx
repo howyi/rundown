@@ -1,19 +1,22 @@
 "use client";
 
+import { LoaderCircle } from "lucide-react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import * as React from "react";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { authClient } from "@/lib/auth-client";
-import { cn } from "@/lib/utils";
+import { Tabs, TabsList, TabsTrigger } from "../ui/tabs";
 
-interface AuthFormProps extends React.HTMLAttributes<HTMLDivElement> {}
-
-export function AuthForm({ className, ...props }: AuthFormProps) {
+export function AuthForm() {
 	const router = useRouter();
 	const [isLoading, setIsLoading] = React.useState<boolean>(false);
-	const [isLogin, setIsLogin] = React.useState<boolean>(true);
+	const [formType, setFormType] = React.useState<"sign-in" | "sign-up">(
+		"sign-in",
+	);
 	const [email, setEmail] = React.useState("");
 	const [password, setPassword] = React.useState("");
 
@@ -21,7 +24,7 @@ export function AuthForm({ className, ...props }: AuthFormProps) {
 		event.preventDefault();
 		setIsLoading(true);
 
-		if (!isLogin) {
+		if (formType === "sign-up") {
 			try {
 				await authClient.signUp.email(
 					{
@@ -37,7 +40,7 @@ export function AuthForm({ className, ...props }: AuthFormProps) {
 							router.push("/");
 						},
 						onError: (ctx) => {
-							alert(ctx.error.message);
+							toast.error(ctx.error.message);
 						},
 					},
 				);
@@ -59,7 +62,7 @@ export function AuthForm({ className, ...props }: AuthFormProps) {
 							router.push("/");
 						},
 						onError: (ctx) => {
-							alert(ctx.error.message);
+							toast.error(ctx.error.message);
 						},
 					},
 				);
@@ -70,57 +73,59 @@ export function AuthForm({ className, ...props }: AuthFormProps) {
 	}
 
 	return (
-		<div className={cn("grid gap-6", className)} {...props}>
-			<div className="text-center text-3xl font-light pb-4">rundown</div>
-			<div className="flex justify-center">
-				<button
-					type="button"
-					className="text-sm underline underline-offset-4 hover:text-primary"
-					onClick={() => setIsLogin(!isLogin)}
-				>
-					{isLogin
-						? "Need an account? Sign up"
-						: "Already have an account? Sign in"}
-				</button>
+		<div className={"w-full max-w-md p-4"}>
+			<div className="text-center text-3xl font-bold pb-12">
+				<Link href="/">📡 rundown</Link>
 			</div>
-			<form onSubmit={onSubmit}>
-				<div className="grid gap-2">
-					<div className="grid gap-1">
-						<Label className="sr-only" htmlFor="email">
-							Email
-						</Label>
-						<Input
-							id="email"
-							placeholder="name@example.com"
-							type="email"
-							autoCapitalize="none"
-							autoComplete="email"
-							autoCorrect="off"
-							disabled={isLoading}
-							value={email}
-							onChange={(e) => setEmail(e.target.value)}
-						/>
-					</div>
-					<div className="grid gap-1">
-						<Label className="sr-only" htmlFor="password">
-							Password
-						</Label>
-						<Input
-							id="password"
-							placeholder="Enter your password"
-							type="password"
-							autoCapitalize="none"
-							autoComplete={isLogin ? "current-password" : "new-password"}
-							disabled={isLoading}
-							value={password}
-							onChange={(e) => setPassword(e.target.value)}
-						/>
-					</div>
-					<Button disabled={isLoading}>
-						{isLoading && "loading..."}
-						{isLogin ? "Sign In with Email" : "Sign Up with Email"}
-					</Button>
+			<form onSubmit={onSubmit} className="flex flex-col gap-2">
+				<Tabs value={formType} onValueChange={(v) => setFormType(v as any)}>
+					<TabsList className="w-full gap-2">
+						<TabsTrigger value="sign-in">Sign In</TabsTrigger>
+						<TabsTrigger value="sign-up">Sign Up</TabsTrigger>
+					</TabsList>
+				</Tabs>
+				<div>
+					<Label className="sr-only" htmlFor="email">
+						Email
+					</Label>
+					<Input
+						id="email"
+						placeholder="name@example.com"
+						type="email"
+						autoCapitalize="none"
+						autoComplete="email"
+						autoCorrect="off"
+						disabled={isLoading}
+						value={email}
+						onChange={(e) => setEmail(e.target.value)}
+					/>
 				</div>
+				<div>
+					<Label className="sr-only" htmlFor="password">
+						Password
+					</Label>
+					<Input
+						id="password"
+						placeholder="Enter your password"
+						type="password"
+						autoCapitalize="none"
+						autoComplete={
+							formType === "sign-in" ? "current-password" : "new-password"
+						}
+						disabled={isLoading}
+						value={password}
+						onChange={(e) => setPassword(e.target.value)}
+					/>
+				</div>
+				<Button disabled={isLoading}>
+					{isLoading ? (
+						<LoaderCircle className="animate-spin" />
+					) : formType === "sign-in" ? (
+						"Sign In with Email"
+					) : (
+						"Sign Up with Email"
+					)}
+				</Button>
 			</form>
 		</div>
 	);
