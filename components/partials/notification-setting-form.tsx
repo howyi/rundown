@@ -76,7 +76,7 @@ function DiscordWebhookForm({
 					defaultValue={notificationDiscordWebhookUrl}
 				/>
 				<Button type="submit" disabled={pending}>
-					Save Webhook URL
+					Save
 				</Button>
 			</div>
 		</form>

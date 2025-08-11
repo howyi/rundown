@@ -33,11 +33,11 @@ const handler = createMcpHandler((server) => {
 				articles: z.array(
 					z.object({
 						title: z.string(),
-						url: z.string().url(),
+						url: z.string().url().or(z.literal("")),
 						summary: z.string(),
 						publishedAt: z.string(),
 						feedTitle: z.string(),
-						feedUrl: z.string(),
+						feedUrl: z.string().url().or(z.literal("")),
 					}),
 				),
 			},

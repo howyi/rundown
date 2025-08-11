@@ -46,13 +46,21 @@ export function ArticleCard({ article }: { article: ArticleWithFeed }) {
 	};
 	return (
 		<li className="px-4 py-2 flex flex-col gap-2 bg-card border-2 border-l-4 shadow-md">
-			<div className="flex flex-row gap-2 text-xs">
-				<Link
-					href={`/feeds/${article.feed.id}`}
-					className="flex-1 italic text-muted-foreground hover:underline"
-				>
-					{article.feed.title}
-				</Link>
+			<div className="flex flex-row gap-2 text-xs italic text-muted-foreground">
+				<div className="flex-1">
+					<Link href={`/feeds/${article.feed.id}`} className=" hover:underline">
+						{article.feed.title}
+					</Link>
+					{"  -  "}
+					<a
+						className="hover:underline"
+						href={article.feed.url}
+						target="_blank"
+						rel="noopener noreferrer"
+					>
+						{article.feed.url}
+					</a>
+				</div>
 				<span className=" text-gray-500">
 					{new Date(article.publishedAt).toLocaleDateString()}
 				</span>

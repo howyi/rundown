@@ -70,7 +70,7 @@ async function FeedItems() {
 	return (
 		<SidebarMenu>
 			{feeds.map((feed) => (
-				<SidebarMenuItem key={feed.id} className="px-2">
+				<SidebarMenuItem key={feed.id} className="px-2 truncate">
 					<SidebarMenuButton asChild>
 						<Link href={`/feeds/${feed.id}`}>{feed.title}</Link>
 					</SidebarMenuButton>

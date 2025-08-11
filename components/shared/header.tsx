@@ -26,9 +26,13 @@ export function Header({
 	);
 }
 
-export function SettingsHeader({ title }: { title?: string }) {
+export function SettingsHeader() {
 	return (
-		<Header title={title}>
+		<header className="flex flex-col md:flex-row">
+			<div className="flex-1 flex flex-row gap-2 pb-4">
+				<SidebarOpenButton />
+				<h1 className="text-lg font-bold flex-1 my-auto">Settings</h1>
+			</div>
 			<NavigationMenu>
 				<NavigationMenuList>
 					<NavigationMenuItem>
@@ -66,6 +70,6 @@ export function SettingsHeader({ title }: { title?: string }) {
 					</NavigationMenuItem>
 				</NavigationMenuList>
 			</NavigationMenu>
-		</Header>
+		</header>
 	);
 }

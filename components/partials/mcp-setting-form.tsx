@@ -40,7 +40,7 @@ function McpApiKeyForm({ mcpApiKey }: { mcpApiKey: string }) {
 					<Clipboard />
 				</Button>
 			</div>
-			<div className="flex flex-row gap-2">
+			<div className="flex flex-col md:flex-row gap-2">
 				<RegenerateApiKeyButton />
 				<RevokeApiKeyButton />
 			</div>

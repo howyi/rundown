@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useState } from "react";
 import {
 	Dialog,
@@ -101,7 +100,7 @@ export function SummarizeSettingForm({
 		}
 	};
 	return (
-		<div className="flex flex-col lg:flex-row divide-border">
+		<div className="flex flex-col md:flex-row divide-border">
 			<div className="flex-1 flex flex-col gap-4 p-4 overflow-hidden break-words whitespace-pre-wrap">
 				<div className="flex flex-col gap-2">
 					<Label className="mb-auto font-bold">Language</Label>
@@ -155,22 +154,22 @@ export function SummarizeSettingForm({
 				<div className="flex flex-col gap-2">
 					<Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
 						<DialogTrigger asChild>
-							<Button variant={"outline"}>Select PreviewArticle</Button>
+							<Button>Select Preview Article</Button>
 						</DialogTrigger>
 						<DialogContent className="overflow-cl">
 							<DialogHeader>
-								<DialogTitle>Select PreviewArticle from Timeline</DialogTitle>
+								<DialogTitle>Select Preview Article</DialogTitle>
 								<DialogDescription>
-									Select an article from the{" "}
-									<Link className="underline" href={"/timeline"}>
-										timeline
-									</Link>{" "}
-									to use for preview. If there are no articles, please add RSS
-									feeds from the{" "}
-									<Link className="underline" href={"/feeds"}>
-										Feed List
-									</Link>
-									.
+									Select an article from{" "}
+									<a
+										className="font-medium underline"
+										href="https://thisweekinreact.com/newsletter"
+										target="_blank"
+										rel="noopener noreferrer"
+									>
+										the week in react
+									</a>{" "}
+									RSS
 								</DialogDescription>
 							</DialogHeader>
 							<ScrollArea className="max-h-96 px-4">
@@ -182,13 +181,21 @@ export function SummarizeSettingForm({
 											key={article.id}
 										>
 											<Button
-												variant="outline"
 												onClick={() => handleArticleSelect(article.id)}
 												className="w-full text-left"
 											>
 												Select Article
 											</Button>
 											{article.title}
+											<br />
+											<a
+												className="text-xs text-muted-foreground underline"
+												href={article.url}
+												target="_blank"
+												rel="noopener noreferrer"
+											>
+												{article.url}
+											</a>
 										</div>
 									))}
 								</div>
@@ -239,7 +246,6 @@ export function SummarizeSettingForm({
 					<ScrollBar orientation="vertical" />
 				</ScrollArea>
 			</div>
-			{/* Add form elements here */}
 		</div>
 	);
 }

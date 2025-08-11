@@ -10,7 +10,7 @@ export async function AddFeed({
 	userId,
 	url,
 }: {
-	userId: string;
+	userId?: string;
 	url: string;
 }): Promise<void> {
 	const existingFeedRecord = await db.query.feed.findFirst({
@@ -27,23 +27,24 @@ export async function AddFeed({
 		title: parsed.title || "",
 		description: parsed.description || "",
 	};
-	const userFeedRecord: typeof userFeed.$inferInsert = {
-		userId,
-		feedId,
-	};
 
 	await db.insert(feed).values(feedRecord).onConflictDoUpdate({
 		target: feed.rssUrl,
 		set: feedRecord,
 	});
-	await db
-		.insert(userFeed)
-		.values(userFeedRecord)
-		.onConflictDoUpdate({
-			target: [userFeed.userId, userFeed.feedId],
-			set: userFeedRecord,
-		});
-
+	if (userId) {
+		const userFeedRecord: typeof userFeed.$inferInsert = {
+			userId,
+			feedId,
+		};
+		await db
+			.insert(userFeed)
+			.values(userFeedRecord)
+			.onConflictDoUpdate({
+				target: [userFeed.userId, userFeed.feedId],
+				set: userFeedRecord,
+			});
+	}
 	if (parsed.items.length === 0) {
 		return;
 	}

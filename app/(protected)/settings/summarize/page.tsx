@@ -2,11 +2,11 @@ import { SummarizeSettingForm } from "@/components/partials/summertize-setting-f
 import { Separator } from "@/components/ui/separator";
 import { db } from "@/database";
 import { getUserId } from "@/lib/auth";
-import { ListTimelineArticle } from "@/server/queries/list-timeline-article";
+import { ListExampleArticle } from "@/server/queries/list-example-article";
 
 export default async function Home() {
 	const userId = await getUserId();
-	const articles = await ListTimelineArticle({ userId });
+	const exampleArticles = await ListExampleArticle();
 	const setting = await db.query.userSetting.findFirst({
 		where: (userSetting, { eq }) => eq(userSetting.userId, userId),
 	});
@@ -18,7 +18,7 @@ export default async function Home() {
 				language={setting?.summaryLanguage ?? "english"}
 				length={setting?.summaryLength ?? "short"}
 				customInstructions={setting?.summaryInstructions ?? ""}
-				articles={articles}
+				articles={exampleArticles}
 			/>
 		</div>
 	);
