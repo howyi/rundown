@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { toast } from "sonner";
 import {
 	Dialog,
 	DialogContent,
@@ -10,7 +11,7 @@ import {
 	DialogTrigger,
 } from "@/components/ui/dialog";
 import { SummaryLengthOptions } from "@/lib/const";
-import type { Article } from "@/lib/types";
+import type { ArticleWithFeed } from "@/lib/types";
 import {
 	PreviewSummarizeAction,
 	SaveSummarySettingAction,
@@ -35,7 +36,7 @@ export function SummarizeSettingForm({
 	language: string;
 	length: string;
 	customInstructions: string;
-	articles: Article[];
+	articles: ArticleWithFeed[];
 }) {
 	const [saved, setSaved] = useState({
 		language: initialLanguage,
@@ -61,16 +62,26 @@ export function SummarizeSettingForm({
 	const [summarized, setSummarized] = useState("");
 
 	const handleSave = async () => {
-		await SaveSummarySettingAction({
-			language,
-			length,
-			customInstructions,
-		});
-		setSaved({
-			language,
-			length,
-			customInstructions,
-		});
+		toast.promise(
+			SaveSummarySettingAction({
+				language,
+				length,
+				customInstructions,
+			}),
+			{
+				loading: "Saving settings...",
+				success: () => {
+					setSaved({
+						language,
+						length,
+						customInstructions,
+					});
+					return "Settings saved successfully!";
+				},
+				error: (error) => `Failed to save settings: ${error}`,
+			},
+		);
+
 		// Here you would typically send the data to your backend or save it in some state management
 	};
 
@@ -156,40 +167,36 @@ export function SummarizeSettingForm({
 						<DialogTrigger asChild>
 							<Button>Select Preview Article</Button>
 						</DialogTrigger>
-						<DialogContent className="overflow-cl">
+						<DialogContent className="overflow-hidden">
 							<DialogHeader>
 								<DialogTitle>Select Preview Article</DialogTitle>
-								<DialogDescription>
-									Select an article from{" "}
-									<a
-										className="font-medium underline"
-										href="https://thisweekinreact.com/newsletter"
-										target="_blank"
-										rel="noopener noreferrer"
-									>
-										the week in react
-									</a>{" "}
-									RSS
-								</DialogDescription>
+								<DialogDescription>Select an example article</DialogDescription>
 							</DialogHeader>
 							<ScrollArea className="max-h-96 px-4">
+								<ScrollBar orientation="horizontal" />
 								<ScrollBar orientation="vertical" />
 								<div className="flex flex-col gap-2">
 									{articles.map((article) => (
 										<div
-											className="justify-start text-left whitespace-pre-wrap border-2 border-l-4 p-2"
+											className="flex flex-col gap-1 text-left whitespace-pre-wrap border-2 border-l-4 p-2"
 											key={article.id}
 										>
-											<Button
-												onClick={() => handleArticleSelect(article.id)}
-												className="w-full text-left"
-											>
-												Select Article
-											</Button>
-											{article.title}
-											<br />
+											<p className="text-xs text-muted-foreground line-clamp-1 break-all whitespace-pre-wrap">
+												{article.feed.title}
+											</p>
+											<div className="flex flex-row gap-2">
+												<Button
+													onClick={() => handleArticleSelect(article.id)}
+													className="text-left"
+												>
+													Select
+												</Button>
+												<p className="flex-1 line-clamp-2 text-wrap whitespace-pre-wrap">
+													{article.title}
+												</p>
+											</div>
 											<a
-												className="text-xs text-muted-foreground underline"
+												className="text-xs text-muted-foreground underline line-clamp-1 break-all whitespace-pre-wrap"
 												href={article.url}
 												target="_blank"
 												rel="noopener noreferrer"
@@ -202,27 +209,8 @@ export function SummarizeSettingForm({
 							</ScrollArea>
 						</DialogContent>
 					</Dialog>
-					{/* <Select value={previewArticleId} onValueChange={setPreviewArticleId}>
-						<SelectTrigger className="w-full">
-							<SelectValue
-								placeholder="Select an article"
-								className="truncate"
-							/>
-						</SelectTrigger>
-						<SelectContent className="w-full max-w-200">
-							{articles.map((article) => (
-								<SelectItem
-									key={article.id}
-									value={article.id}
-									onClick={() => setPreviewArticleId(article.id)}
-								>
-									{article.title}
-								</SelectItem>
-							))}
-						</SelectContent>
-					</Select> */}
 				</div>
-				<div className="whitespace-pre-wrap font-light text-sm">
+				<div className="font-light text-sm line-clamp-1 break-all whitespace-pre-wrap">
 					Preview Article:{" "}
 					<a
 						className="font-medium underline"

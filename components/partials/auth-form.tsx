@@ -37,7 +37,7 @@ export function AuthForm() {
 							setIsLoading(true);
 						},
 						onSuccess: () => {
-							router.push("/");
+							router.push("/settings/summarize");
 						},
 						onError: (ctx) => {
 							toast.error(ctx.error.message);
