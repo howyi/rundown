@@ -13,37 +13,37 @@ You can customize the summary language and length, and receive notifications via
 
 ---
 
-## ✨ Key Features
+## Key Features
 
-### 📚 RSS Feed Registration & Management
+### RSS Feed Registration & Management
 
 * Register and manage multiple RSS feeds in one place.
 * Simple UI for adding, editing, and deleting feeds.
 
 ![RSS Feed Registration](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/2fd4crqjtcgnflzv6o8o.png)
 
-### 🔍 Update Detection + AI Summarization
+### Update Detection + AI Summarization
 
 * Checks feeds every 15 minutes for new articles.
 * Summarizes using **gpt-5-nano** with multi-language and adjustable length options.
 
 ![AI Summarization](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/6ogghc2n78ife7k0pdon.gif)
 
-### 🗓 Timeline View
+### Timeline View
 
 * Browse summarized articles in chronological order.
 * Easily access past articles.
 
 ![Timeline](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/ra9g6ldpiq3dd7d6wtbq.png)
 
-### 🔔 Discord Webhook Notifications
+### Discord Webhook Notifications
 
 * Get instant updates in your Discord channels.
 * Ideal for teams and communities.
 
 ![Discord Webhook Notifications](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/1aae1g7ytkh5556mtoz9.png)
 
-### 🔗 MCP Integration
+### MCP Integration
 
 * Access feed and article data programmatically via the MCP server.
 * Connect to `rundown.sbox.studio/mcp` using an API key generated from the settings page.
@@ -53,7 +53,7 @@ You can customize the summary language and length, and receive notifications via
 
 ---
 
-## 🛠 Tech Stack
+## Tech Stack
 
 **Frontend & Auth**
 
@@ -71,7 +71,7 @@ You can customize the summary language and length, and receive notifications via
 
 ---
 
-## ⚙️ Railway Setup
+## Railway Setup
 
 Services running on Railway:
 
@@ -85,7 +85,7 @@ Services running on Railway:
 
 ---
 
-## 🚀 Local Development (pnpm / mise / Docker)
+## Local Development (pnpm / mise / Docker)
 
 This repository uses **mise** for tool version management and **pnpm** as the package manager. The database is started with **Docker Compose**.
 
@@ -137,12 +137,7 @@ This repository uses **mise** for tool version management and **pnpm** as the pa
 
 ---
 
-## ☁️ Deployment (Railway)
+## Deployment (Railway)
 
-You can deploy directly from the [Railway Template](https://railway.com/deploy/rundown-1) by setting the required environment variables. See "Railway Setup" above for the service structure.
-
----
-
-## 📌 License
-
-MIT
+You can deploy directly from the [Railway Template](https://railway.com/deploy/rundown-1) by setting the required environment variables. 
+See "Railway Setup" above for the service structure.
