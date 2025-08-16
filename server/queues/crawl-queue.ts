@@ -5,6 +5,7 @@ import { article, type feed, type userFeed } from "@/database/schema/app";
 import { ItemToArticle } from "../lib/item-to-article";
 import { Notification } from "../mutations/notification";
 import { Summarize } from "../mutations/summarize";
+import { GetSetting } from "../queries/get-setting";
 
 export const RedisConnection: ConnectionOptions = {
 	family: process.env.REDIS_HOST?.includes("localhost") ? undefined : 0,
@@ -93,9 +94,7 @@ async function crawlArticle({
 		await db.insert(article).values(articleRecord);
 
 		for (const userFeedRecord of userFeedRecords) {
-			const setting = await db.query.userSetting.findFirst({
-				where: (setting, { eq }) => eq(setting.userId, userFeedRecord.userId),
-			});
+			const setting = await GetSetting(userFeedRecord.userId);
 			console.log(`Found user setting for user ${userFeedRecord.userId}`);
 			const summary = await Summarize({
 				userId: userFeedRecord.userId,
@@ -114,7 +113,7 @@ async function crawlArticle({
 				articleTitle: articleRecord.title,
 				articleUrl: articleRecord.url,
 				articleSummary: summary,
-				discordWebhookUrl: setting?.notificationDiscordWebhookUrl,
+				setting,
 			});
 
 			console.log(

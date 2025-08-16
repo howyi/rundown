@@ -2,7 +2,7 @@ import { RenderedMarkdown } from "../shared/rendered-markdown";
 
 const DESCRIPTION = `
 rundown crawls your subscribed RSS feeds every 15 minutes, detects new or updated articles, and generates AI-powered summaries.
-You can customize the summary language and length, and receive notifications via Discord Webhook.
+You can customize the summary language and length, and receive notifications via Slack and Discord Webhooks.
 
 [GitHub](https://github.com/howyi/rundown) 
 
@@ -31,9 +31,9 @@ You can customize the summary language and length, and receive notifications via
 
 ![Timeline](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/ra9g6ldpiq3dd7d6wtbq.png)
 
-### Discord Webhook Notifications
+### Slack & Discord Webhook Notifications
 
-* Get instant updates in your Discord channels.
+* Get instant updates in your Slack and Discord channels.
 * Ideal for teams and communities.
 
 ![Discord Webhook Notifications](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/1aae1g7ytkh5556mtoz9.png)

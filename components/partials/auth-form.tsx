@@ -59,7 +59,7 @@ export function AuthForm() {
 							setIsLoading(true);
 						},
 						onSuccess: () => {
-							router.push("/");
+							router.push("/timeline");
 						},
 						onError: (ctx) => {
 							toast.error(ctx.error.message);

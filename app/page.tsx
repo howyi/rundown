@@ -3,8 +3,8 @@ import Link from "next/link";
 import { ProductDescription } from "@/components/partials/product-description";
 import { Button } from "@/components/ui/button";
 import { auth } from "@/lib/auth";
-import { cn } from "@/lib/utils";
 import { RandomPick } from "@/lib/random-pick";
+import { cn } from "@/lib/utils";
 
 export default async function Home() {
 	const session = await auth.api.getSession({

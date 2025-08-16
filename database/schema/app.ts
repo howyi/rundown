@@ -1,5 +1,7 @@
+import type { Installation } from "@slack/bolt";
 import { relations } from "drizzle-orm";
 import {
+	json,
 	pgTable,
 	primaryKey,
 	text,
@@ -92,6 +94,9 @@ export const userSetting = pgTable("user_setting", {
 	notificationDiscordWebhookUrl: varchar("notification_discord_webhook_url")
 		.notNull()
 		.default(""),
+	notificationSlackInstallation: json("notification_slack_installation")
+		.$type<Installation | undefined>()
+		.default(undefined),
 	mcpApiKey: varchar("mcp_api_key").notNull().default(""),
 	timestamp: timestamp("timestamp").defaultNow(),
 });

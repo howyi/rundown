@@ -16,6 +16,9 @@ export default async function Home() {
 				notificationDiscordWebhookUrl={
 					setting?.notificationDiscordWebhookUrl ?? ""
 				}
+				notificationSlackInstallation={
+					setting?.notificationSlackInstallation ?? null
+				}
 			/>
 		</div>
 	);

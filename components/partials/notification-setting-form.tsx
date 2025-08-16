@@ -1,5 +1,6 @@
 "use client";
 
+import type { Installation } from "@slack/bolt";
 import { Bell, LoaderCircle } from "lucide-react";
 import { useActionState, useEffect } from "react";
 import { toast } from "sonner";
@@ -13,13 +14,18 @@ import { Label } from "../ui/label";
 
 export function NotificationSettingForm({
 	notificationDiscordWebhookUrl,
+	notificationSlackInstallation,
 }: {
 	notificationDiscordWebhookUrl: string;
+	notificationSlackInstallation: Installation | null;
 }) {
 	return (
 		<div className="flex-1 flex flex-col gap-2 p-4 overflow-hidden break-words whitespace-pre-wrap">
 			<DiscordWebhookForm
 				notificationDiscordWebhookUrl={notificationDiscordWebhookUrl}
+			/>
+			<SlackInstallationForm
+				notificationSlackInstallation={notificationSlackInstallation}
 			/>
 			<TestNotificationButton />
 		</div>
@@ -80,5 +86,26 @@ function DiscordWebhookForm({
 				</Button>
 			</div>
 		</form>
+	);
+}
+
+function SlackInstallationForm({
+	notificationSlackInstallation,
+}: {
+	notificationSlackInstallation: Installation | null;
+}) {
+	return (
+		<div className="flex flex-col gap-2">
+			<Label className="mb-auto font-bold flex-1 my-auto" htmlFor="url">
+				Slack Webhook
+			</Label>
+			<Button asChild className="max-w-sm">
+				<a href={`/api/slack/install`}>
+					{notificationSlackInstallation
+						? "ReInstall Slack App"
+						: "Install Slack App"}
+				</a>
+			</Button>
+		</div>
 	);
 }

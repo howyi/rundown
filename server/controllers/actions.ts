@@ -1,6 +1,5 @@
 "use server";
 
-import { setTimeout } from "node:timers/promises";
 import { and, eq } from "drizzle-orm";
 import { nanoid } from "nanoid";
 import { revalidatePath } from "next/cache";
@@ -12,6 +11,7 @@ import type { FeedId } from "@/lib/types";
 import { AddFeed } from "../mutations/add-feed";
 import { Notification } from "../mutations/notification";
 import { Summarize } from "../mutations/summarize";
+import { GetSetting } from "../queries/get-setting";
 import { ListTimelineArticle } from "../queries/list-timeline-article";
 
 export type ActionState = {
@@ -71,35 +71,22 @@ export async function SaveSummarySettingAction(params: {
 	customInstructions: string;
 }): Promise<void> {
 	const userId = await getUserId();
-	const setting = await db.query.userSetting.findFirst({
-		where: (setting, { eq }) => eq(setting.userId, userId),
-	});
-	if (setting) {
-		await db
-			.update(userSetting)
-			.set({
-				summaryLanguage: params.language,
-				summaryLength: params.length,
-				summaryInstructions: params.customInstructions,
-			})
-			.where(eq(userSetting.userId, userId));
-	} else {
-		await db.insert(userSetting).values({
-			userId,
+	await GetSetting(userId);
+	await db
+		.update(userSetting)
+		.set({
 			summaryLanguage: params.language,
 			summaryLength: params.length,
 			summaryInstructions: params.customInstructions,
-		});
-	}
+		})
+		.where(eq(userSetting.userId, userId));
 }
 
 export async function SummarizeAction(params: {
 	articleId: string;
 }): Promise<string> {
 	const userId = await getUserId();
-	const setting = await db.query.userSetting.findFirst({
-		where: (setting, { eq }) => eq(setting.userId, userId),
-	});
+	const setting = await GetSetting(userId);
 	const articleRecord = await db.query.article.findFirst({
 		where: (article, { eq }) => eq(article.id, params.articleId),
 	});
@@ -192,13 +179,7 @@ export async function AddDiscordWebhookAction(
 
 export async function TestNotificationAction(): Promise<ActionState> {
 	const userId = await getUserId();
-	await setTimeout(1000); // Simulate a delay
-	const setting = await db.query.userSetting.findFirst({
-		where: (setting, { eq }) => eq(setting.userId, userId),
-	});
-	if (!setting) {
-		return { error: "User setting not found" };
-	}
+	const setting = await GetSetting(userId);
 	const articles = await ListTimelineArticle({
 		userId,
 		limit: 1,
@@ -229,7 +210,7 @@ export async function TestNotificationAction(): Promise<ActionState> {
 		articleTitle: article.title,
 		articleUrl: article.url,
 		articleSummary: article.summary,
-		discordWebhookUrl: setting?.notificationDiscordWebhookUrl,
+		setting,
 	});
 	return {};
 }
