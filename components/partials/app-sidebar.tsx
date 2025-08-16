@@ -22,7 +22,7 @@ export async function AppSidebar() {
 	return (
 		<Sidebar>
 			<SidebarHeader className="flex flex-col">
-				{process.env.NEXT_PUBLIC_SPONSOR && (
+				{process.env.NEXT_PUBLIC_LIVE_DEMO && (
 					<>
 						<Button
 							asChild
