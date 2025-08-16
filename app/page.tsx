@@ -1,4 +1,5 @@
 import { headers } from "next/headers";
+import Image from "next/image";
 import Link from "next/link";
 import { ProductDescription } from "@/components/partials/product-description";
 import { Button } from "@/components/ui/button";
@@ -14,8 +15,8 @@ export default async function Home() {
 	return (
 		<>
 			<Background />
-			<main className="mx-auto p-4 pt-24 flex flex-col gap-[32px] row-start-2 items-center md:my-12 max-w-4xl backdrop-blur-xs bg-background/40 md:border">
-				<h1 className="text-4xl font-bold animate-pulse">📡 </h1>
+			<main className="mx-auto p-4 pt-12 flex flex-col gap-[32px] row-start-2 items-center md:my-12 max-w-4xl backdrop-blur-xs bg-background/40 md:border">
+				<Image src="/icon.png" alt="Rundown Logo" width={140} height={140} />
 				<h1 className="text-4xl font-bold ">rundown</h1>
 				<Button asChild>
 					{session ? (
