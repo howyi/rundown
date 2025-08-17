@@ -1,21 +1,36 @@
 "use client";
 
+import { Loader } from "lucide-react";
 import { useActionState, useEffect, useState } from "react";
 import { toast } from "sonner";
 import { authClient } from "@/lib/auth-client";
-import { CreateOrganizationAction } from "@/server/controllers/actions";
+import {
+	CreateOrganizationAction,
+	GenerateInvitationCodeAction,
+	RevokeInvitationCodeAction,
+} from "@/server/controllers/actions";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 
 export function OrganizationSettingForm({
 	invitations,
+	status,
 }: {
 	invitations: {
 		id: string;
 		name: string;
 	}[];
+	status?: string;
 }) {
+	useEffect(() => {
+		if (status === "invitation_accepted") {
+			console.log("Invitation accepted successfully");
+		} else if (status === "invitation_error") {
+			console.error("Failed to accept invitation");
+		}
+	}, [status]);
+
 	const { data: organizations } = authClient.useListOrganizations();
 	return (
 		<div className="flex flex-col gap-2">
@@ -166,6 +181,8 @@ function OrganizationCard({ id, name }: { id: string; name: string }) {
 				>
 					delete
 				</Button>
+				<GenerateInvitationCodeButton organizationId={id} />
+				<RevokeInvitationCodeButton organizationId={id} />
 			</div>
 			<div className="flex flex-row gap-2">
 				<Input
@@ -233,6 +250,67 @@ function OrganizationCreateForm() {
 					Create
 				</Button>
 			</div>
+		</form>
+	);
+}
+
+function GenerateInvitationCodeButton({
+	organizationId,
+}: {
+	organizationId: string;
+}) {
+	const [state, formAction, pending] = useActionState(
+		GenerateInvitationCodeAction,
+		{},
+	);
+
+	useEffect(() => {
+		if (state?.error) {
+			toast.error(state.error);
+		}
+		if (state?.code) {
+			toast.success(`Invitation code copied to clipboard!`);
+			//click to copy
+			navigator.clipboard.writeText(
+				`${process.env.NEXT_PUBLIC_FRONTEND_URL}/account?invitation=${state.code}`,
+			);
+		}
+	}, [state]);
+
+	return (
+		<form action={formAction} className="flex flex-row gap-2">
+			<input type="hidden" name="organizationId" value={organizationId} />
+			<Button type="submit" disabled={pending}>
+				{pending && <Loader className="animate-spin" />}
+				Generate Invitation Code
+			</Button>
+		</form>
+	);
+}
+
+function RevokeInvitationCodeButton({
+	organizationId,
+}: {
+	organizationId: string;
+}) {
+	const [state, formAction, pending] = useActionState(
+		RevokeInvitationCodeAction,
+		{},
+	);
+
+	useEffect(() => {
+		if (state?.error) {
+			toast.error(state.error);
+		}
+	}, [state]);
+
+	return (
+		<form action={formAction} className="flex flex-row gap-2">
+			<input type="hidden" name="organizationId" value={organizationId} />
+			<Button type="submit" disabled={pending}>
+				{pending && <Loader className="animate-spin" />}
+				Revoke Invitation Code
+			</Button>
 		</form>
 	);
 }

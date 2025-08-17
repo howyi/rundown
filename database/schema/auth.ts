@@ -98,3 +98,15 @@ export const invitation = pgTable("invitation", {
 		.notNull()
 		.references(() => user.id, { onDelete: "cascade" }),
 });
+
+export const publicInvitation = pgTable("public_invitation", {
+	code: text("code").primaryKey(),
+	organizationId: text("organization_id")
+		.notNull()
+		.references(() => organization.id, { onDelete: "cascade" }),
+	role: text("role"),
+	expiresAt: timestamp("expires_at").notNull(),
+	inviterId: text("inviter_id")
+		.notNull()
+		.references(() => user.id, { onDelete: "cascade" }),
+});

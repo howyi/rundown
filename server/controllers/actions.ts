@@ -7,6 +7,7 @@ import { headers } from "next/headers";
 import { z } from "zod";
 import { db } from "@/database";
 import { userArticle, userFeed, userSetting } from "@/database/schema/app";
+import { publicInvitation } from "@/database/schema/auth";
 import { auth, getUserId } from "@/lib/auth";
 import type { FeedId } from "@/lib/types";
 import { AddFeed } from "../mutations/add-feed";
@@ -275,4 +276,80 @@ export async function CreateOrganizationAction(
 		return { error: "Failed to create organization" };
 	}
 	return { redirect: true };
+}
+
+export async function GenerateInvitationCodeAction(
+	// biome-ignore lint/suspicious/noExplicitAny: unused
+	_prevState: any,
+	formData: FormData,
+): Promise<ActionState & { code?: string }> {
+	// zodでバリデーション
+	const schema = z.object({
+		organizationId: z.string(),
+	});
+	const result = schema.safeParse(Object.fromEntries(formData));
+	if (!result.success) {
+		return { error: "Invalid organization ID" };
+	}
+	const session = await auth.api.getSession({
+		headers: await headers(),
+	});
+	if (!session || !session.user.id) {
+		return { error: "Invalid user session" };
+	}
+	const userId = session.user.id;
+	const member = await db.query.member.findFirst({
+		where: (member, { and, eq }) =>
+			and(
+				eq(member.organizationId, result.data.organizationId),
+				eq(member.userId, userId),
+			),
+	});
+	if (!member) {
+		return { error: "Failed to find organization member" };
+	}
+	const code = nanoid(10);
+	await db.insert(publicInvitation).values({
+		code,
+		organizationId: result.data.organizationId,
+		role: "member",
+		expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days
+		inviterId: userId,
+	});
+	return { code };
+}
+
+export async function RevokeInvitationCodeAction(
+	// biome-ignore lint/suspicious/noExplicitAny: unused
+	_prevState: any,
+	formData: FormData,
+): Promise<ActionState> {
+	const schema = z.object({
+		organizationId: z.string(),
+	});
+	const result = schema.safeParse(Object.fromEntries(formData));
+	if (!result.success) {
+		return { error: "Invalid organization ID" };
+	}
+	const session = await auth.api.getSession({
+		headers: await headers(),
+	});
+	if (!session || !session.user.id) {
+		return { error: "Invalid user session" };
+	}
+	const userId = session.user.id;
+	const member = await db.query.member.findFirst({
+		where: (member, { and, eq }) =>
+			and(
+				eq(member.organizationId, result.data.organizationId),
+				eq(member.userId, userId),
+			),
+	});
+	if (!member) {
+		return { error: "Failed to find organization member" };
+	}
+	await db
+		.delete(publicInvitation)
+		.where(eq(publicInvitation.organizationId, result.data.organizationId));
+	return {};
 }

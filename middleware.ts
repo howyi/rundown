@@ -16,5 +16,10 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
 	runtime: "nodejs",
-	matcher: ["/feeds/:path*", "/timeline/:path*", "/settings/:path*"],
+	matcher: [
+		"/feeds/:path*",
+		"/timeline/:path*",
+		"/settings/:path*",
+		"/account/:path*",
+	],
 };
