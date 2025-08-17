@@ -353,3 +353,15 @@ export async function RevokeInvitationCodeAction(
 		.where(eq(publicInvitation.organizationId, result.data.organizationId));
 	return {};
 }
+
+export async function RemoveSlackInstallationAction(): Promise<ActionState> {
+	const userId = await getUserId();
+	await db
+		.update(userSetting)
+		.set({
+			notificationSlackInstallation: null,
+		})
+		.where(eq(userSetting.userId, userId));
+	revalidatePath("/settings/slack");
+	return {};
+}

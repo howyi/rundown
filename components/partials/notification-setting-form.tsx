@@ -6,6 +6,7 @@ import { useActionState, useEffect } from "react";
 import { toast } from "sonner";
 import {
 	AddDiscordWebhookAction,
+	RemoveSlackInstallationAction,
 	TestNotificationAction,
 } from "@/server/controllers/actions";
 import { Button } from "../ui/button";
@@ -24,9 +25,14 @@ export function NotificationSettingForm({
 			<DiscordWebhookForm
 				notificationDiscordWebhookUrl={notificationDiscordWebhookUrl}
 			/>
-			<SlackInstallationForm
-				notificationSlackInstallation={notificationSlackInstallation}
-			/>
+			<Label className="mb-auto font-bold flex-1 my-auto">Slack Webhook</Label>
+			{notificationSlackInstallation ? (
+				<RemoveSlackInstallationButton />
+			) : (
+				<SlackInstallationForm
+					notificationSlackInstallation={notificationSlackInstallation}
+				/>
+			)}
 			<TestNotificationButton />
 		</div>
 	);
@@ -96,9 +102,6 @@ function SlackInstallationForm({
 }) {
 	return (
 		<div className="flex flex-col gap-2">
-			<Label className="mb-auto font-bold flex-1 my-auto" htmlFor="url">
-				Slack Webhook
-			</Label>
 			<Button asChild className="max-w-sm">
 				<a href={`/api/slack/install`}>
 					{notificationSlackInstallation
@@ -107,5 +110,26 @@ function SlackInstallationForm({
 				</a>
 			</Button>
 		</div>
+	);
+}
+
+function RemoveSlackInstallationButton() {
+	const [state, formAction, pending] = useActionState(
+		RemoveSlackInstallationAction,
+		{},
+	);
+
+	useEffect(() => {
+		if (state?.error) {
+			toast.error(state.error);
+		}
+	}, [state]);
+	return (
+		<form action={formAction} className="flex flex-row gap-2">
+			<Button type="submit" size="sm" disabled={pending}>
+				{pending ? <LoaderCircle className="animate-spin" /> : <Bell />}
+				Remove Slack Webhook
+			</Button>
+		</form>
 	);
 }
