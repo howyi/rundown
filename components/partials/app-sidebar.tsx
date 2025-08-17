@@ -1,4 +1,4 @@
-import { Heart, Home, Rss, Settings2 } from "lucide-react";
+import { Heart, Home, Rss, Settings2, User } from "lucide-react";
 import Link from "next/link";
 import {
 	Sidebar,
@@ -16,7 +16,7 @@ import { Button } from "../ui/button";
 import { Separator } from "../ui/separator";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 import { SidebarFoldButton } from "./sidebar-fold-button";
-import { SignOutButton } from "./sign-out-button";
+import { SidebarOrganization } from "./sidebar-organization";
 
 export async function AppSidebar() {
 	return (
@@ -49,13 +49,25 @@ export async function AppSidebar() {
 						</Link>
 					</Button>
 				</div>
+				<SidebarOrganization />
 			</SidebarHeader>
 			<SidebarContent>
 				<FeedItems />
 			</SidebarContent>
 			<SidebarFooter>
 				<div className="flex flex-row gap-1">
-					<SignOutButton />
+					<Tooltip>
+						<TooltipTrigger asChild>
+							<Button size={"sm"} asChild>
+								<Link href="/account">
+									<User />
+								</Link>
+							</Button>
+						</TooltipTrigger>
+						<TooltipContent>
+							<p>Account</p>
+						</TooltipContent>
+					</Tooltip>
 					<Tooltip>
 						<TooltipTrigger asChild>
 							<Button size={"sm"} asChild>

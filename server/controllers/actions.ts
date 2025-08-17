@@ -3,10 +3,11 @@
 import { and, eq } from "drizzle-orm";
 import { nanoid } from "nanoid";
 import { revalidatePath } from "next/cache";
+import { headers } from "next/headers";
 import { z } from "zod";
 import { db } from "@/database";
 import { userArticle, userFeed, userSetting } from "@/database/schema/app";
-import { getUserId } from "@/lib/auth";
+import { auth, getUserId } from "@/lib/auth";
 import type { FeedId } from "@/lib/types";
 import { AddFeed } from "../mutations/add-feed";
 import { Notification } from "../mutations/notification";
@@ -238,4 +239,40 @@ export async function RevokeApiKeyAction(): Promise<ActionState> {
 		.where(eq(userSetting.userId, userId));
 	revalidatePath("/settings/mcp");
 	return {};
+}
+
+export async function CreateOrganizationAction(
+	// biome-ignore lint/suspicious/noExplicitAny: unused
+	_prevState: any,
+	formData: FormData,
+): Promise<ActionState & { redirect?: boolean }> {
+	// zodでバリデーション
+	const schema = z.object({
+		name: z
+			.string()
+			.min(2)
+			.max(100)
+			.regex(/^[\p{L}\p{N}\s-]+$/u, "Invalid organization name"),
+	});
+	const result = schema.safeParse(Object.fromEntries(formData));
+	if (!result.success) {
+		return { error: "Invalid organization name" };
+	}
+	const userId = await getUserId();
+	const data = await auth.api.createOrganization({
+		body: {
+			name: result.data.name,
+			slug: nanoid(10),
+			logo: "https://example.com/logo.png",
+			metadata: {},
+			userId, // server-only
+			keepCurrentActiveOrganization: false,
+		},
+		// This endpoint requires session cookies.
+		headers: await headers(),
+	});
+	if (!data) {
+		return { error: "Failed to create organization" };
+	}
+	return { redirect: true };
 }

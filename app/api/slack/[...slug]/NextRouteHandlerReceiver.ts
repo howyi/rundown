@@ -324,7 +324,15 @@ export default class NextRouteHandlerReceiver implements Receiver {
 					console.log("Session:", session);
 					// Pass the metadata in state parameter if exists.
 					// Developers can use the value for additional/custom data associated with the installation.
-					v2Installation.metadata = session?.user?.id;
+
+					if (!session || !session.user.id) {
+						throw new Error("User not authenticated");
+					}
+					if (session.session.activeOrganizationId) {
+						v2Installation.metadata = `o_${session.session.activeOrganizationId}`;
+					} else {
+						v2Installation.metadata = session?.user?.id;
+					}
 				}
 				await this.installer.installationStore.storeInstallation(
 					v2Installation,

@@ -140,7 +140,7 @@ export function ArticleCard({ article }: { article: ArticleWithFeed }) {
 			>
 				{article.title}
 			</Link>
-			<div className="relative text-sm mt-1 p-2 border">
+			<div className="relative mt-1 p-2 border">
 				{summarized ? (
 					<SummarizedContent content={summarized} />
 				) : (
