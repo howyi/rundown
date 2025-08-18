@@ -47,12 +47,19 @@ export async function crawlJobHandler(job: { data: CrawlQueueData }) {
 	});
 
 	for (const feedRecord of feedRecords) {
-		await crawlArticle({
-			feedRecord,
-			userFeedRecords: userFeedRecords.filter(
-				(record) => record.feedId === feedRecord.id,
-			),
-		});
+		try {
+			await crawlArticle({
+				feedRecord,
+				userFeedRecords: userFeedRecords.filter(
+					(record) => record.feedId === feedRecord.id,
+				),
+			});
+		} catch (error) {
+			console.error(
+				`Error processing feed ${feedRecord.title} (${feedRecord.rssUrl}):`,
+				error,
+			);
+		}
 	}
 }
 

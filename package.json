@@ -14,6 +14,7 @@
 		"prod:register-jobs": "tsx server/controllers/register-jobs.ts",
 		"build:worker": "esbuild server/controllers/worker.ts --bundle --platform=node --target=node22 --outfile=build/services/worker.js",
 		"bootstrap": "drizzle-kit push --force && pnpm run prod:register-jobs",
+		"crawl": "tsx server/controllers/crawl.ts",
 		"typecheck": "tsc"
 	},
 	"dependencies": {
