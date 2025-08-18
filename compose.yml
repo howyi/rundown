@@ -7,10 +7,10 @@ services:
       - POSTGRES_USER=root
       - POSTGRES_PASSWORD=rootroot
       - POSTGRES_DB=rundown
-  cache:
-    image: redis:7
-    ports:
-      - '6379:6379'
+  # cache:
+  #   image: redis:7
+  #   ports:
+  #     - '6379:6379'
   # storage:
   #   image: 'bitnami/minio:latest'
   #   ports:

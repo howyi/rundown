@@ -3,7 +3,7 @@
 	"version": "0.1.0",
 	"private": true,
 	"scripts": {
-		"dev": "concurrently -c auto -n 'next,docker,studio,worker,bull-board' 'next dev --turbopack --experimental-https' 'docker compose up' 'drizzle-kit studio' 'tsx watch --clear-screen=false server/controllers/worker.ts' 'tsx watch --clear-screen=false server/controllers/bull-board.ts'",
+		"dev": "concurrently -c auto -n 'next,docker,studio' 'next dev --turbopack --experimental-https' 'docker compose up' 'drizzle-kit studio'",
 		"build": "next build",
 		"start": "next start",
 		"lint": "biome check",
@@ -13,7 +13,7 @@
 		"prod:worker": "tsx server/controllers/worker.ts",
 		"prod:register-jobs": "tsx server/controllers/register-jobs.ts",
 		"build:worker": "esbuild server/controllers/worker.ts --bundle --platform=node --target=node22 --outfile=build/services/worker.js",
-		"bootstrap": "drizzle-kit push --force && pnpm run prod:register-jobs",
+		"bootstrap": "drizzle-kit push --force",
 		"crawl": "tsx server/controllers/crawl.ts",
 		"typecheck": "tsc"
 	},
