@@ -6,6 +6,7 @@ import { eq } from "drizzle-orm";
 import { headers } from "next/headers";
 import { db } from "@/database";
 import { userArticle, userFeed, userSetting } from "@/database/schema/app";
+import { publicInvitation } from "@/database/schema/auth";
 
 export const auth = betterAuth({
 	emailAndPassword: {
@@ -30,6 +31,9 @@ export const auth = betterAuth({
 					await db
 						.delete(userArticle)
 						.where(eq(userArticle.userId, `o_${data.organization.id}`));
+					await db
+						.delete(publicInvitation)
+						.where(eq(publicInvitation.organizationId, data.organization.id));
 				},
 				afterDelete: async () => {
 					// a callback to run after deleting org

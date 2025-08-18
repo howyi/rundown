@@ -12,6 +12,7 @@ import {
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
+import { ConfirmButton } from "./confirm-button";
 
 export function OrganizationSettingForm({
 	invitations,
@@ -143,8 +144,10 @@ function OrganizationCard({ id, name }: { id: string; name: string }) {
 						set active
 					</Button>
 				)}
-				<Button
-					onClick={() => {
+				<ConfirmButton
+					title="Leave Organization"
+					description="Are you sure you want to leave this organization? You will lose access to all resources and data associated with it."
+					onConfirm={() => {
 						toast.promise(
 							authClient.organization.leave({
 								organizationId: id,
@@ -161,9 +164,11 @@ function OrganizationCard({ id, name }: { id: string; name: string }) {
 					}}
 				>
 					leave
-				</Button>
-				<Button
-					onClick={() => {
+				</ConfirmButton>
+				<ConfirmButton
+					title="Delete Organization"
+					description="Are you sure you want to delete this organization? This action cannot be undone."
+					onConfirm={() => {
 						toast.promise(
 							authClient.organization.delete({
 								organizationId: id,
@@ -180,7 +185,7 @@ function OrganizationCard({ id, name }: { id: string; name: string }) {
 					}}
 				>
 					delete
-				</Button>
+				</ConfirmButton>
 				<GenerateInvitationCodeButton organizationId={id} />
 				<RevokeInvitationCodeButton organizationId={id} />
 			</div>
