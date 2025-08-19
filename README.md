@@ -63,7 +63,7 @@ You can customize the summary language and length, and receive notifications via
 
 **Backend Processing**
 
-* BullMQ + Redis (asynchronous jobs)
+* Railway Cronjob (crawl jobs)
 * OpenAI gpt-5-nano (AI summarization)
 
 **Database**
@@ -77,8 +77,7 @@ You can customize the summary language and length, and receive notifications via
 Services running on Railway:
 
 * Next.js app
-* BullMQ worker
-* Redis
+* Crawl Worker
 * PostgreSQL
 * Bootstrap (runs migrations and re-registers cron jobs after deploy)
 
