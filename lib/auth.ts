@@ -6,7 +6,7 @@ import { eq } from "drizzle-orm";
 import { headers } from "next/headers";
 import { db } from "@/database";
 import { userArticle, userFeed, userSetting } from "@/database/schema/app";
-import { publicInvitation } from "@/database/schema/auth";
+import { invitation, publicInvitation } from "@/database/schema/auth";
 
 export const auth = betterAuth({
 	emailAndPassword: {
@@ -15,6 +15,29 @@ export const auth = betterAuth({
 	database: drizzleAdapter(db, {
 		provider: "pg",
 	}),
+	user: {
+		deleteUser: {
+			enabled: true,
+			async beforeDelete({ id }) {
+				const members = await db.query.member.findMany({
+					where: (member, { eq }) => eq(member.userId, id),
+				});
+				if (members.length > 0) {
+					throw new Error("Cannot delete user with active memberships");
+				}
+				await db.delete(userFeed).where(eq(userFeed.userId, id));
+				await db.delete(userSetting).where(eq(userSetting.userId, id));
+				await db.delete(userArticle).where(eq(userArticle.userId, id));
+				await db
+					.delete(publicInvitation)
+					.where(eq(publicInvitation.inviterId, id));
+				await db.delete(invitation).where(eq(invitation.organizationId, id));
+			},
+			async afterDelete() {
+				// Additional cleanup if needed
+			},
+		},
+	},
 	plugins: [
 		nextCookies(),
 		organization({

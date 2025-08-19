@@ -6,6 +6,7 @@ import { Header } from "@/components/shared/header";
 import { Separator } from "@/components/ui/separator";
 import { db } from "@/database";
 import { auth } from "@/lib/auth";
+import { UserDeleteButton } from "@/components/partials/user-delete-button";
 
 export default async function Home({
 	searchParams,
@@ -69,6 +70,7 @@ export default async function Home({
 			<h1 className="text-lg font-bold">User</h1>
 			{session?.user.email}
 			<SignOutButton />
+			<UserDeleteButton />
 			<Separator className="my-2" />
 			<h1 className="text-lg font-bold">Organization</h1>
 			<OrganizationSettingForm
