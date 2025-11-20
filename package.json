@@ -4,6 +4,7 @@
 	"private": true,
 	"scripts": {
 		"dev": "concurrently -c auto -n 'next,docker,studio' 'next dev --turbopack --experimental-https' 'docker compose up' 'drizzle-kit studio'",
+		"devf": "next dev --turbopack --experimental-https",
 		"build": "next build",
 		"start": "next start",
 		"lint": "biome check",
@@ -79,5 +80,10 @@
 		"tsx": "^4.20.3",
 		"tw-animate-css": "^1.3.6",
 		"typescript": "^5"
-	}
+	},
+	"engines": {
+		"node": "24.11.0",
+		"pnpm": "10.21.0"
+	},
+	"packageManager": "pnpm@10.21.0"
 }
