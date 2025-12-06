@@ -2,11 +2,11 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { OrganizationSettingForm } from "@/components/partials/organization-setting-form";
 import { SignOutButton } from "@/components/partials/sign-out-button";
+import { UserDeleteButton } from "@/components/partials/user-delete-button";
 import { Header } from "@/components/shared/header";
 import { Separator } from "@/components/ui/separator";
 import { db } from "@/database";
 import { auth } from "@/lib/auth";
-import { UserDeleteButton } from "@/components/partials/user-delete-button";
 
 export default async function Home({
 	searchParams,
