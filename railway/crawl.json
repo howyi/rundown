@@ -5,7 +5,7 @@
 	},
 	"deploy": {
 		"restartPolicyType": "NEVER",
-		"cronSchedule": "*/15 * * * *",
+		"cronSchedule": "0 15 * * *",
 		"startCommand": "pnpm crawl"
 	}
 }
