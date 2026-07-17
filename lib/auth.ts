@@ -41,9 +41,8 @@ export const auth = betterAuth({
 	plugins: [
 		nextCookies(),
 		organization({
-			organizationDeletion: {
-				disabled: false, //to disable it altogether
-				beforeDelete: async (data) => {
+			organizationHooks: {
+				beforeDeleteOrganization: async (data) => {
 					// a callback to run before deleting org
 					await db
 						.delete(userFeed)
@@ -58,7 +57,7 @@ export const auth = betterAuth({
 						.delete(publicInvitation)
 						.where(eq(publicInvitation.organizationId, data.organization.id));
 				},
-				afterDelete: async () => {
+				afterDeleteOrganization: async () => {
 					// a callback to run after deleting org
 				},
 			},

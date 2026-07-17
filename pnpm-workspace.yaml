@@ -1,0 +1,14 @@
+allowBuilds:
+  # Tailwind CSSが環境に合うネイティブoxideバイナリを準備するために必要。
+  '@tailwindcss/oxide': true
+  # drizzle-kitやtsxなどが利用するesbuildの実行バイナリを準備するために必要。
+  esbuild: true
+  # BullMQの依存が高速なネイティブMessagePack実装を利用できるようにするために必要。
+  msgpackr-extract: true
+  # Next.jsの画像最適化で使うsharpのネイティブバイナリを準備するために必要。
+  sharp: true
+overrides:
+  # drizzle-kit配下の古いesbuild（<=0.24.2）にある開発サーバー脆弱性を修正版へ固定する。
+  esbuild@<=0.24.2: 0.25.12
+  # Next.js配下などの古いpostcss（<8.5.10）にあるCSS文字列化時のXSSを修正版へ更新する。
+  postcss@<8.5.10: ^8.5.10
