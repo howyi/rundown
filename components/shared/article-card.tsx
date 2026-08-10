@@ -24,6 +24,13 @@ import { SummarizeButton } from "./summarize-button";
 import { SummarizedContent } from "./summarized-content";
 import { SummarySkeleton } from "./summary-skeleton";
 
+const articleDateFormatter = new Intl.DateTimeFormat("en-US", {
+	year: "numeric",
+	month: "numeric",
+	day: "numeric",
+	timeZone: "UTC",
+});
+
 export function ArticleCard({ article }: { article: ArticleWithFeed }) {
 	const [summarized, setSummarized] = useState(article.summary || "");
 
@@ -62,7 +69,7 @@ export function ArticleCard({ article }: { article: ArticleWithFeed }) {
 					</a>
 				</div>
 				<span className=" text-gray-500">
-					{new Date(article.publishedAt).toLocaleDateString()}
+					{articleDateFormatter.format(new Date(article.publishedAt))}
 				</span>
 				<DropdownMenu>
 					<DropdownMenuTrigger asChild>

@@ -1,5 +1,7 @@
+import { sql } from "drizzle-orm";
 import { db } from "@/database";
 import type { ArticleWithFeed } from "@/lib/types";
+import { parseExcludedTitleKeywords } from "../lib/feed-filter";
 
 export async function ListTimelineArticle({
 	userId,
@@ -17,9 +19,24 @@ export async function ListTimelineArticle({
 	if (!feedRecords) {
 		return [];
 	}
-	const feedIds = feedRecords.map((record) => record.feedId);
+	if (feedRecords.length === 0) {
+		return [];
+	}
+	const subscriptionsByFeedId = new Map(
+		feedRecords.map((record) => [record.feedId, record]),
+	);
 	const articleRecords = await db.query.article.findMany({
-		where: (article, { inArray }) => inArray(article.feedId, feedIds),
+		where: (article, { and, eq, or }) =>
+			or(
+				...feedRecords.map((record) =>
+					and(
+						eq(article.feedId, record.feedId),
+						...parseExcludedTitleKeywords(record.excludedTitleKeywords).map(
+							(keyword) => sql`strpos(lower(${article.title}), ${keyword}) = 0`,
+						),
+					),
+				),
+			),
 		orderBy: (article, { desc }) => desc(article.publishedAt),
 		limit,
 		with: {
@@ -41,6 +58,8 @@ export async function ListTimelineArticle({
 			url: article.feed.url || "",
 			rssUrl: article.feed.rssUrl || "",
 			description: article.feed.description || "",
+			excludedTitleKeywords:
+				subscriptionsByFeedId.get(article.feed.id)?.excludedTitleKeywords ?? "",
 		},
 	}));
 }

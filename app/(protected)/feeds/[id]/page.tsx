@@ -1,6 +1,7 @@
 import { Rss } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
+import { FeedFilterForm } from "@/components/partials/feed-filter-form";
 import { SidebarOpenButton } from "@/components/partials/sidebar-fold-button";
 import { ArticleList } from "@/components/shared/article-list";
 import { FeedCard } from "@/components/shared/feed-card";
@@ -41,6 +42,10 @@ export default async function Home({
 					</Link>
 				</Button>
 			</FeedCard>
+			<FeedFilterForm
+				feedId={feed.id}
+				excludedTitleKeywords={feed.excludedTitleKeywords}
+			/>
 			<Separator className="my-4" />
 			<ArticleList articles={feed.articles} />
 		</>

@@ -5,6 +5,7 @@ export type Feed = {
 	url: string;
 	rssUrl: string;
 	description: string;
+	excludedTitleKeywords: string;
 };
 
 export type ArticleId = string;

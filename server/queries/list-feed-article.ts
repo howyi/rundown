@@ -1,5 +1,7 @@
+import { sql } from "drizzle-orm";
 import { db } from "@/database";
 import type { FeedWithArticles } from "@/lib/types";
+import { parseExcludedTitleKeywords } from "../lib/feed-filter";
 
 export async function ListFeedArticle({
 	userId,
@@ -8,14 +10,30 @@ export async function ListFeedArticle({
 	userId: string;
 	feedId: string;
 }): Promise<FeedWithArticles> {
+	const subscription = await db.query.userFeed.findFirst({
+		where: (userFeed, { and, eq }) =>
+			and(eq(userFeed.userId, userId), eq(userFeed.feedId, feedId)),
+	});
+	if (!subscription) {
+		throw new Error("Feed subscription not found");
+	}
 	const feedRecord = await db.query.feed.findFirst({
 		where: (feed, { eq }) => eq(feed.id, feedId),
 	});
 	if (!feedRecord) {
 		throw new Error("Feed not found");
 	}
+	const excludedTitleKeywords = parseExcludedTitleKeywords(
+		subscription.excludedTitleKeywords,
+	);
 	const articleRecords = await db.query.article.findMany({
-		where: (article, { eq }) => eq(article.feedId, feedId),
+		where: (article, { and, eq }) =>
+			and(
+				eq(article.feedId, feedId),
+				...excludedTitleKeywords.map(
+					(keyword) => sql`strpos(lower(${article.title}), ${keyword}) = 0`,
+				),
+			),
 		orderBy: (article, { desc }) => desc(article.publishedAt),
 		with: {
 			userArticles: {
@@ -31,6 +49,7 @@ export async function ListFeedArticle({
 		url: feedRecord.url || "",
 		rssUrl: feedRecord.rssUrl || "",
 		description: feedRecord.description || "",
+		excludedTitleKeywords: subscription.excludedTitleKeywords,
 		articles: articleRecords.map((article) => ({
 			id: article.id,
 			title: article.title || "",
@@ -43,6 +62,7 @@ export async function ListFeedArticle({
 				url: article.feed.url || "",
 				rssUrl: article.feed.rssUrl || "",
 				description: article.feed.description || "",
+				excludedTitleKeywords: subscription.excludedTitleKeywords,
 			},
 		})),
 	};

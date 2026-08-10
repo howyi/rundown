@@ -18,6 +18,7 @@ import { ListTimelineArticle } from "../queries/list-timeline-article";
 
 export type ActionState = {
 	error?: string;
+	success?: string;
 };
 export async function AddFeedAction(
 	// biome-ignore lint/suspicious/noExplicitAny: unused
@@ -65,6 +66,37 @@ export async function UnsubscribeAction(
 		);
 	revalidatePath("/");
 	return {};
+}
+
+export async function SaveFeedFilterAction(
+	// biome-ignore lint/suspicious/noExplicitAny: unused
+	_prevState: any,
+	formData: FormData,
+): Promise<ActionState> {
+	const schema = z.object({
+		feedId: z.string().min(1),
+		excludedTitleKeywords: z.string().max(2000),
+	});
+	const result = schema.safeParse(Object.fromEntries(formData));
+	if (!result.success) {
+		return { error: "Invalid feed filter" };
+	}
+
+	const userId = await getUserId();
+	const updatedSubscriptions = await db
+		.update(userFeed)
+		.set({
+			excludedTitleKeywords: result.data.excludedTitleKeywords.trim(),
+		})
+		.where(
+			and(eq(userFeed.userId, userId), eq(userFeed.feedId, result.data.feedId)),
+		)
+		.returning({ feedId: userFeed.feedId });
+	if (updatedSubscriptions.length === 0) {
+		return { error: "Feed subscription not found" };
+	}
+	revalidatePath(`/feeds/${result.data.feedId}`);
+	return { success: "Feed filter saved" };
 }
 
 export async function SaveSummarySettingAction(params: {

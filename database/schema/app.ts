@@ -28,6 +28,9 @@ export const userFeed = pgTable(
 	{
 		userId: varchar("user_id").notNull(),
 		feedId: varchar("feed_id").notNull(),
+		excludedTitleKeywords: text("excluded_title_keywords")
+			.notNull()
+			.default(""),
 		timestamp: timestamp("timestamp").defaultNow(),
 	},
 	(t) => [primaryKey({ columns: [t.userId, t.feedId] })],

@@ -18,5 +18,6 @@ export async function ListUserFeed({
 		rssUrl: record.feed.rssUrl || "",
 		title: record.feed.title || "",
 		description: record.feed.description || "",
+		excludedTitleKeywords: record.excludedTitleKeywords,
 	}));
 }

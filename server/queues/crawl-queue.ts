@@ -2,6 +2,7 @@ import { type ConnectionOptions, Queue } from "bullmq";
 import Parser from "rss-parser";
 import { db } from "@/database";
 import { article, type feed, type userFeed } from "@/database/schema/app";
+import { isItemExcludedByTitle } from "../lib/feed-filter";
 import { ItemToArticle } from "../lib/item-to-article";
 import { Notification } from "../mutations/notification";
 import { Summarize } from "../mutations/summarize";
@@ -101,6 +102,12 @@ async function crawlArticle({
 		await db.insert(article).values(articleRecord);
 
 		for (const userFeedRecord of userFeedRecords) {
+			if (isItemExcludedByTitle(item, userFeedRecord.excludedTitleKeywords)) {
+				console.log(
+					`Skipped article by title filter: ${item.title} (${userFeedRecord.userId})`,
+				);
+				continue;
+			}
 			const setting = await GetSetting(userFeedRecord.userId);
 			console.log(`Found user setting for user ${userFeedRecord.userId}`);
 			const summary = await Summarize({

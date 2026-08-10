@@ -52,6 +52,7 @@ export async function ListExampleArticle(): Promise<ArticleWithFeed[]> {
 					url: feedRecord.url || "",
 					rssUrl: feedRecord.rssUrl || "",
 					description: feedRecord.description || "",
+					excludedTitleKeywords: "",
 				},
 			})),
 		);
