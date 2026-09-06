@@ -2,6 +2,7 @@ import { type ConnectionOptions, Queue } from "bullmq";
 import Parser from "rss-parser";
 import { db } from "@/database";
 import { article, type feed, type userFeed } from "@/database/schema/app";
+import { runWithCrawlLock } from "../lib/crawl-lock";
 import { isItemExcludedByTitle } from "../lib/feed-filter";
 import { ItemToArticle } from "../lib/item-to-article";
 import { Notification } from "../mutations/notification";
@@ -33,10 +34,21 @@ type CrawlQueueData = {
 	note: string;
 };
 
-export async function crawlJobHandler(job: { data: CrawlQueueData }) {
+export async function crawlJobHandler(job: {
+	id?: string;
+	data: CrawlQueueData;
+}) {
 	const data = job.data;
-	console.log(`Crawl Job: ${data.note} | Job ID: ${data.note}`);
+	console.log(`Crawl Job: ${data.note} | Job ID: ${job.id ?? "direct"}`);
 
+	const client = await db.$client.connect();
+	const ran = await runWithCrawlLock(client, crawlFeeds);
+	if (!ran) {
+		console.log("Skipped crawl because another crawl is still running");
+	}
+}
+
+async function crawlFeeds() {
 	const userFeedRecords = await db.query.userFeed.findMany();
 
 	// array unique

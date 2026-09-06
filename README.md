@@ -26,7 +26,7 @@ You can customize the summary language and length, and receive notifications via
 ### Update Detection + AI Summarization
 
 * Checks feeds every 15 minutes for new articles.
-* Summarizes using **gpt-5-nano** with multi-language and adjustable length options.
+* Summarizes using **gpt-5.6-luna** with low reasoning effort, multi-language, and adjustable length options.
 
 ![AI Summarization](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/6ogghc2n78ife7k0pdon.gif)
 
@@ -64,7 +64,7 @@ You can customize the summary language and length, and receive notifications via
 **Backend Processing**
 
 * Railway Cronjob (crawl jobs)
-* OpenAI gpt-5-nano (AI summarization)
+* OpenAI gpt-5.6-luna with low reasoning effort (AI summarization)
 
 **Database**
 
